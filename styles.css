@@ -2074,3 +2074,251 @@ select.form-input {
         left: 21px;
     }
 }
+
+/* =====================================================
+   PROPUESTAS PAGE STYLES
+===================================================== */
+
+.proposals-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.stat-sublabel {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--gris-medio);
+    margin-top: 4px;
+}
+
+.proposals-filters {
+    background: white;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow-sm);
+}
+
+/* Proposals Grid */
+.proposals-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+.proposal-card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition-base);
+    border-left: 4px solid transparent;
+}
+
+.proposal-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+}
+
+.proposal-card[data-status="enviada"] {
+    border-left-color: #4CCED5;
+}
+
+.proposal-card[data-status="aprobada"] {
+    border-left-color: #10B981;
+}
+
+.proposal-card[data-status="borrador"] {
+    border-left-color: #6B7280;
+}
+
+.proposal-card[data-status="rechazada"] {
+    border-left-color: #AA2F0C;
+}
+
+.proposal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.proposal-status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.badge-enviada {
+    background: rgba(76, 206, 213, 0.1);
+    color: #4CCED5;
+}
+
+.badge-aprobada {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10B981;
+}
+
+.badge-borrador {
+    background: rgba(107, 114, 128, 0.1);
+    color: #6B7280;
+}
+
+.badge-rechazada {
+    background: rgba(170, 47, 12, 0.1);
+    color: #AA2F0C;
+}
+
+.badge-revision {
+    background: rgba(238, 128, 40, 0.1);
+    color: #EE8028;
+}
+
+.proposal-menu {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.proposal-menu:hover {
+    background: var(--gris-claro);
+}
+
+.proposal-menu i {
+    width: 18px;
+    height: 18px;
+    color: var(--gris-medio);
+}
+
+.proposal-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--azul-profundo);
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.proposal-client {
+    font-size: 0.875rem;
+    color: var(--gris-medio);
+    margin-bottom: 4px;
+}
+
+.proposal-subtitle {
+    font-size: 0.8125rem;
+    color: var(--gris-medio);
+}
+
+.proposal-divider {
+    height: 1px;
+    background: var(--borde);
+    margin: 16px 0;
+}
+
+.proposal-description {
+    font-size: 0.875rem;
+    color: var(--azul-profundo);
+    line-height: 1.5;
+}
+
+.proposal-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--azul-profundo);
+    margin-bottom: 16px;
+}
+
+.proposal-dates {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.proposal-date-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8125rem;
+    color: var(--gris-medio);
+}
+
+.proposal-date-item i {
+    width: 14px;
+    height: 14px;
+}
+
+.proposal-date-item.success {
+    color: var(--verde);
+}
+
+.proposal-date-item.muted {
+    color: var(--gris-medio);
+}
+
+.proposal-footer {
+    padding-top: 16px;
+    border-top: 1px solid var(--borde);
+}
+
+.btn-proposal-action {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: var(--gris-claro);
+    border: none;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--azul-profundo);
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.btn-proposal-action:hover {
+    background: var(--turquesa);
+    color: white;
+}
+
+.btn-proposal-action i {
+    width: 16px;
+    height: 16px;
+}
+
+/* Responsive Propuestas */
+@media (max-width: 1200px) {
+    .proposals-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 1024px) {
+    .proposals-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .proposals-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .proposals-grid {
+        grid-template-columns: 1fr;
+    }
+}

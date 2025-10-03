@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Propuestas - CRM Forja Digital AE</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="dashboard-page">
+    
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <img src="LOGO COLOR.png" alt="Forja Digital AE" class="sidebar-logo">
+            <h1 class="sidebar-title">CRM Forja</h1>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <a href="dashboard.html" class="nav-item">
+                <i data-lucide="layout-dashboard"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="leads.html" class="nav-item">
+                <i data-lucide="users"></i>
+                <span>Leads</span>
+            </a>
+            <a href="pipeline.html" class="nav-item">
+                <i data-lucide="target"></i>
+                <span>Pipeline</span>
+            </a>
+            <a href="interacciones.html" class="nav-item">
+                <i data-lucide="message-square"></i>
+                <span>Interacciones</span>
+            </a>
+            <a href="propuestas.html" class="nav-item active">
+                <i data-lucide="file-text"></i>
+                <span>Propuestas</span>
+            </a>
+            <a href="recordatorios.html" class="nav-item">
+                <i data-lucide="bell"></i>
+                <span>Recordatorios</span>
+            </a>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <button onclick="logout()" class="btn-logout">
+                <i data-lucide="log-out"></i>
+                <span>Cerrar Sesión</span>
+            </button>
+        </div>
+    </aside>
+    
+    <!-- Main Content -->
+    <div class="main-wrapper">
+        
+        <!-- Header -->
+        <header class="header">
+            <div class="header-search">
+                <i data-lucide="search"></i>
+                <input type="text" placeholder="Buscar propuestas..." id="searchInput">
+            </div>
+            
+            <div class="header-actions">
+                <button class="header-btn" id="syncBtn">
+                    <i data-lucide="refresh-cw"></i>
+                </button>
+                
+                <button class="header-btn notifications">
+                    <i data-lucide="bell"></i>
+                    <span class="badge">3</span>
+                </button>
+                
+                <div class="user-menu">
+                    <div class="user-avatar">
+                        <span id="userInitials">AF</span>
+                    </div>
+                    <div class="user-info">
+                        <span class="user-name" id="userName">Administrador Forja</span>
+                        <span class="user-role" id="userRole">Admin</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Content Area -->
+        <main class="content">
+            
+            <!-- Page Header -->
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Gestión de Propuestas</h1>
+                    <p class="page-subtitle">Crea y da seguimiento a tus propuestas comerciales</p>
+                </div>
+                <button class="btn-primary" onclick="openAddProposalModal()">
+                    <i data-lucide="plus"></i>
+                    Nueva Propuesta
+                </button>
+            </div>
+            
+            <!-- Stats Cards -->
+            <div class="proposals-stats">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: rgba(39, 50, 90, 0.1); color: #27325A;">
+                        <i data-lucide="file-text"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-label">Total Propuestas</span>
+                        <span class="stat-value">5</span>
+                        <span class="stat-sublabel">$335,000 en total</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: rgba(76, 206, 213, 0.1); color: #4CCED5;">
+                        <i data-lucide="send"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-label">Enviadas</span>
+                        <span class="stat-value">2</span>
+                        <span class="stat-sublabel">Esperando respuesta</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: rgba(16, 185, 129, 0.1); color: #10B981;">
+                        <i data-lucide="check-circle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-label">Aprobadas</span>
+                        <span class="stat-value">1</span>
+                        <span class="stat-sublabel">$35,000 ganados</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: rgba(107, 114, 128, 0.1); color: #6B7280;">
+                        <i data-lucide="edit"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-label">Borradores</span>
+                        <span class="stat-value">1</span>
+                        <span class="stat-sublabel">Pendientes de enviar</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Filters -->
+            <div class="proposals-filters">
+                <div class="filter-group">
+                    <i data-lucide="filter"></i>
+                    <select id="filterStatus" class="filter-select">
+                        <option value="">Todos los estados</option>
+                        <option value="borrador">Borrador</option>
+                        <option value="enviada">Enviada</option>
+                        <option value="aprobada">Aprobada</option>
+                        <option value="rechazada">Rechazada</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Proposals Grid -->
+            <div class="proposals-grid">
+                
+                <!-- Propuesta 1 -->
+                <div class="proposal-card" data-status="enviada">
+                    <div class="proposal-header">
+                        <div class="proposal-status-badge badge-enviada">Enviada</div>
+                        <button class="proposal-menu">
+                            <i data-lucide="more-vertical"></i>
+                        </button>
+                    </div>
+                    
+                    <h3 class="proposal-title">Propuesta CRM Enterprise</h3>
+                    <p class="proposal-client">Tech Solutions SA</p>
+                    <p class="proposal-subtitle">Juan Pérez</p>
+                    
+                    <div class="proposal-divider"></div>
+                    
+                    <p class="proposal-description">Implementación completa de CRM con integración de sistemas existentes</p>
+                    
+                    <div class="proposal-divider"></div>
+                    
+                    <div class="proposal-value">$50,000</div>
+                    
+                    <div class="proposal-dates">
+                        <div class="proposal-date-item">
+                            <i data-lucide="calendar"></i>
+                            <span>Creada: 17/1/2024</span>
+                        </div>
+                        <div class="proposal-date-item">
+                            <i data-lucide="send"></i>
+                            <span>Enviada: 19/1/2024</span>
+                        </div>
+                        <div class="proposal-date-item">
+                            <i data-lucide="clock"></i>
+                            <span>Válida hasta: 19/2/2024</span>
+                        </div>
+                    </div>
+                    
+                    <div class="proposal-footer">
+                        <button class="btn-proposal-action">
+                            <i data-lucide="eye"></i>
+                            Ver PDF
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Propuesta 2 -->
+                <div class="proposal-card" data-status="aprobada">
+                    <div class="proposal-header">
+                        <div class="proposal-status-badge badge-aprobada">Aprobada</div>
+                        <button class="proposal-menu">
+                            <i data-lucide="more-vertical"></i>
+                        </button>
+                    </div>
+                    
+                    <h3 class="proposal-title">Propuesta Sistema Global Systems</h3>
+                    <p class="proposal-client">Global Systems</p>
+                    <p class="proposal-subtitle">Sofía Torres</p>
+                    
+                    <div class="proposal-divider"></div>
+                    
+                    <p class="proposal-description">Solución CRM completa con módulos de ventas, marketing y servicio al cliente</p>
+                    
+                    <div class="proposal-divider"></div>
+                    
+                    <div class="proposal-value">$100,000</div>
+                    
+                    <div class="proposal-dates">
+                        <div class="proposal-date-item">
+                            <i data-lucide="calendar"></i>
+                            <span>Creada: 14/1/2024</span>
+                        </div>
+                        <div class="proposal-date-item">
+                            <i data-lucide="send"></i>
+                            <span>Enviada: 17/1/2024</span>
+                        </div>
+                        <div class="proposal-date-item success">
+                            <i data-lucide="check"></i>
+                            <span>Válida hasta: 27/2/2024</span>
+                        </div>
+                    </div>
+                    
+                    <div class="proposal-footer">
+                        <button class="btn-proposal-action">
+                            <i data-lucide="download"></i>
+                            Descargar
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Propuesta 3 -->
+                <div class="proposal-card" data-status="borrador">
+                    <div class="proposal-header">
+                        <div class="proposal-status-badge badge-borrador">Borrador</div>
+                        <button class="proposal-menu">
+                            <i data-lucide="more-vertical"></i>
+                        </button>
+                    </div>
+                    
+                    <h3 class="proposal-title">Propuesta CRM Startup Package</h3>
+                    <p class="proposal-client">StartUp Innovadora</p>
+                    <p class="proposal-subtitle">Miguel Sánchez</p>
+                    
+                    <div class="proposal-divider"></div>
+                    
+                    <p class="proposal-description">Paquete inicial para startups con funcionalidades esenciales</p>
+                    
+                    <div class="proposal-divider"></div>
+                    
+                    <div class="proposal-value">$25,000</div>
+                    
+                    <div class="proposal-dates">
+                        <div class="proposal-date-item">
+                            <i data-lucide="calendar"></i>
+                            <span>Creada: 23/1/2024</span>
+                        </div>
+                        <div class="proposal-date-item muted">
+                            <i data-lucide="edit"></i>
+                            <span>Pendiente de enviar</span>
+                        </div>
+                    </div>
+                    
+                    <div class="proposal-footer">
+                        <button class="btn-proposal-action">
+                            <i data-lucide="edit"></i>
+                            Editar
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Propuesta 4 -->
+                <div class="proposal-card" data-status="enviada">
+                    <div class="proposal-header">
+                        <div class="proposal-status-badge badge-enviada">Enviada</div>
+                        <button class="proposal-menu">
+                            <i data-lucide="more-vertical"></i>
+                        </button>
+                    </div>
+                    
+                    <h3 class="proposal-title">Propuesta CRM Cloud Innovatech</h3>
+                    <p class="proposal-client">Innovatech Corp</p>
+                    <p class="proposal-subtitle">Ana Martínez</p>
+                    
+                    <div class="proposal-divider"></div>
+                    
+                    <p class="proposal-description">Solución cloud con integraciones personalizadas</p>
+                    
+                    <div class="proposal-divider"></div>
+                    
+                    <div class="proposal-value">$75,000</div>
+                    
+                    <div class="proposal-dates">
+                        <div class="proposal-date-item">
+                            <i data-lucide="calendar"></i>
+                            <span>Creada: 18/1/2024</span>
+                        </div>
+                        <div class="proposal-date-item">
+                            <i data-lucide="send"></i>
+                            <span>Enviada: 21/1/2024</span>
+                        </div>
+                        <div class="proposal-date-item">
+                            <i data-lucide="clock"></i>
+                            <span>Válida hasta: 24/2/2024</span>
+                        </div>
+                    </div>
+                    
+                    <div class="proposal-footer">
+                        <button class="btn-proposal-action">
+                            <i data-lucide="eye"></i>
+                            Ver PDF
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Propuesta 5 -->
+                <div class="proposal-card" data-status="aprobada">
+                    <div class="proposal-header">
+                        <div class="proposal-status-badge badge-aprobada">Aprobada</div>
+                        <button class="proposal-menu">
+                            <i data-lucide="more-vertical"></i>
+                        </button>
+                    </div>
+                    
+                    <h3 class="proposal-title">Propuesta Expansión Módulos</h3>
+                    <p class="proposal-client">Tech Solutions SA</p>
+                    <p class="proposal-subtitle">Juan Pérez</p>
+                    
+                    <div class="proposal-divider"></div>
+                    
+                    <p class="proposal-description">Módulos adicionales de automatización y analytics</p>
+                    
+                    <div class="proposal-divider"></div>
+                    
+                    <div class="proposal-value">$35,000</div>
+                    
+                    <div class="proposal-dates">
+                        <div class="proposal-date-item">
+                            <i data-lucide="calendar"></i>
+                            <span>Creada: 9/1/2024</span>
+                        </div>
+                        <div class="proposal-date-item">
+                            <i data-lucide="send"></i>
+                            <span>Enviada: 11/1/2024</span>
+                        </div>
+                        <div class="proposal-date-item success">
+                            <i data-lucide="check"></i>
+                            <span>Válida hasta: 11/2/2024</span>
+                        </div>
+                    </div>
+                    
+                    <div class="proposal-footer">
+                        <button class="btn-proposal-action">
+                            <i data-lucide="download"></i>
+                            Descargar
+                        </button>
+                    </div>
+                </div>
+                
+            </div>
+            
+        </main>
+        
+    </div>
+    
+    <!-- Scripts -->
+    <script src="app.js"></script>
+    <script>
+        lucide.createIcons();
+        
+        if (!checkAuth()) {
+            window.location.href = 'index.html';
+        }
+        
+        const user = getCurrentUser();
+        document.getElementById('userName').textContent = user.name || 'Usuario';
+        document.getElementById('userRole').textContent = user.role || 'Usuario';
+        const initials = user.name 
+            ? user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()
+            : 'U';
+        document.getElementById('userInitials').textContent = initials;
+        
+        function openAddProposalModal() {
+            alert('Modal para crear nueva propuesta (próxima iteración)');
+        }
+        
+        // Filtro por estado
+        document.getElementById('filterStatus').addEventListener('change', function() {
+            const status = this.value;
+            const cards = document.querySelectorAll('.proposal-card');
+            
+            cards.forEach(card => {
+                const cardStatus = card.dataset.status;
+                card.style.display = (!status || cardStatus === status) ? 'block' : 'none';
+            });
+        });
+        
+        // Búsqueda
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const cards = document.querySelectorAll('.proposal-card');
+            
+            cards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                card.style.display = text.includes(searchTerm) ? 'block' : 'none';
+            });
+        });
+        
+        document.getElementById('syncBtn').addEventListener('click', function() {
+            const icon = this.querySelector('i');
+            icon.style.animation = 'spin 1s linear';
+            setTimeout(() => icon.style.animation = '', 1000);
+        });
+    </script>
+    
+</body>
+</html>
