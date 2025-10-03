@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - CRM Forja Digital AE</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="login-page">
+    
+    <!-- Contenedor Principal Split Screen -->
+    <div class="login-container">
+        
+        <!-- Panel Izquierdo (Branding) -->
+        <div class="login-left">
+            <!-- Órbitas Animadas de Fondo -->
+            <div class="orbit-container">
+                <div class="orbit orbit-1"></div>
+                <div class="orbit orbit-2"></div>
+                <div class="orbit orbit-3"></div>
+            </div>
+            
+            <!-- Partículas Flotantes -->
+            <div class="particles">
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+            </div>
+            
+            <!-- Contenido del Panel -->
+            <div class="login-left-content">
+                <!-- Logo -->
+                <div class="logo-container">
+                    <img src=""C:\Users\ASUSX513EAI5\OneDrive\Escritorio\CRM-Forja\LOGO COLOR.png"" alt="Forja Digital AE" class="logo-large">
+                </div>
+                
+                <!-- Título y Subtítulo -->
+                <div class="branding-text">
+                    <h1 class="branding-title">CRM Forja Digital AE</h1>
+                    <p class="branding-subtitle">Gestiona tus relaciones con clientes de manera eficiente</p>
+                </div>
+                
+                <!-- Ilustración decorativa -->
+                <div class="illustration">
+                    <div class="mockup-container">
+                        <div class="mockup-laptop">
+                            <div class="laptop-screen"></div>
+                        </div>
+                        <div class="mockup-mobile">
+                            <div class="mobile-screen"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Panel Derecho (Formulario) -->
+        <div class="login-right">
+            <div class="login-form-container">
+                
+                <!-- Logo pequeño móvil -->
+                <div class="logo-mobile">
+                    <img src="logo.svg" alt="Forja Digital AE">
+                </div>
+                
+                <!-- Título -->
+                <h2 class="login-title">Iniciar Sesión</h2>
+                <p class="login-subtitle">Ingresa tus credenciales para acceder</p>
+                
+                <!-- Formulario -->
+                <form id="loginForm" class="login-form">
+                    
+                    <!-- Email -->
+                    <div class="form-group">
+                        <label for="email" class="form-label">Correo electrónico</label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            class="form-input" 
+                            placeholder="tu@email.com"
+                            required
+                            autocomplete="email"
+                        >
+                    </div>
+                    
+                    <!-- Contraseña -->
+                    <div class="form-group">
+                        <label for="password" class="form-label">Contraseña</label>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            class="form-input" 
+                            placeholder="••••••••"
+                            required
+                            autocomplete="current-password"
+                        >
+                    </div>
+                    
+                    <!-- Recordarme -->
+                    <div class="form-group-inline">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="remember" name="remember">
+                            <span>Recordarme</span>
+                        </label>
+                        <a href="#" class="forgot-password">¿Olvidaste tu contraseña?</a>
+                    </div>
+                    
+                    <!-- Mensaje de Error -->
+                    <div id="errorMessage" class="error-message" style="display: none;">
+                        <span class="error-icon">⚠</span>
+                        <span class="error-text">Credenciales inválidas</span>
+                    </div>
+                    
+                    <!-- Botón Submit -->
+                    <button type="submit" class="btn-login" id="loginBtn">
+                        <span class="btn-text">Iniciar Sesión</span>
+                        <span class="btn-loader" style="display: none;">
+                            <span class="spinner"></span>
+                            Verificando...
+                        </span>
+                    </button>
+                    
+                </form>
+                
+                <!-- Footer -->
+                <div class="login-footer">
+                    <p class="footer-text">
+                        ¿No tienes cuenta? 
+                        <a href="#" class="footer-link">Contacta al administrador</a>
+                    </p>
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+    
+    <!-- JavaScript -->
+    <script src="app.js"></script>
+    
+</body>
+</html>

@@ -1,0 +1,594 @@
+/* =====================================================
+   RESET Y VARIABLES
+===================================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    /* Colores Institucionales Forja Digital AE */
+    --azul-marino: #27325A;
+    --azul-secundario: #33487A;
+    --purpura: #8560C0;
+    --naranja: #EE8028;
+    --turquesa: #4CCED5;
+    --rojo: #AA2F0C;
+    --naranja-suave: #EC8E48;
+    --azul-profundo: #1D1A70;
+    --azul-noche: #152E57;
+    --turquesa-claro: #73CFCE;
+    
+    /* Colores Complementarios */
+    --blanco: #FFFFFF;
+    --gris-claro: #F3F4F6;
+    --gris-medio: #6B7280;
+    --gris-oscuro: #374151;
+    --verde: #10B981;
+    --borde: #E5E7EB;
+    --borde-medio: #D1D5DB;
+    
+    /* Tipografía */
+    --font-heading: 'Poppins', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    
+    /* Sombras */
+    --shadow-sm: 0 2px 8px rgba(39, 50, 90, 0.08);
+    --shadow-md: 0 8px 24px rgba(39, 50, 90, 0.12);
+    --shadow-lg: 0 16px 48px rgba(39, 50, 90, 0.16);
+    
+    /* Transiciones */
+    --transition-fast: 0.2s ease;
+    --transition-base: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body {
+    font-family: var(--font-body);
+    color: var(--azul-profundo);
+    background: var(--gris-claro);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+
+/* =====================================================
+   LOGIN PAGE - SPLIT SCREEN
+===================================================== */
+
+.login-page {
+    background: var(--blanco);
+    overflow: hidden;
+}
+
+.login-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+
+/* =====================================================
+   PANEL IZQUIERDO (BRANDING)
+===================================================== */
+
+.login-left {
+    position: relative;
+    width: 50%;
+    background: linear-gradient(135deg, var(--azul-marino) 0%, var(--purpura) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px;
+    overflow: hidden;
+}
+
+/* Órbitas Animadas */
+.orbit-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: 600px;
+}
+
+.orbit {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    animation: orbitRotate 20s linear infinite;
+}
+
+.orbit-1 {
+    width: 300px;
+    height: 300px;
+    opacity: 0.3;
+}
+
+.orbit-2 {
+    width: 450px;
+    height: 450px;
+    opacity: 0.2;
+    animation-duration: 30s;
+}
+
+.orbit-3 {
+    width: 600px;
+    height: 600px;
+    opacity: 0.1;
+    animation-duration: 40s;
+}
+
+@keyframes orbitRotate {
+    from {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+/* Partículas Flotantes */
+.particles {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.particle {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 50%;
+    animation: drift 15s infinite;
+}
+
+.particle:nth-child(1) { top: 20%; left: 20%; animation-delay: 0s; }
+.particle:nth-child(2) { top: 40%; left: 60%; animation-delay: 2s; }
+.particle:nth-child(3) { top: 60%; left: 30%; animation-delay: 4s; }
+.particle:nth-child(4) { top: 80%; left: 70%; animation-delay: 1s; }
+.particle:nth-child(5) { top: 30%; left: 80%; animation-delay: 3s; }
+.particle:nth-child(6) { top: 70%; left: 15%; animation-delay: 5s; }
+.particle:nth-child(7) { top: 50%; left: 50%; animation-delay: 2.5s; }
+.particle:nth-child(8) { top: 15%; left: 45%; animation-delay: 4.5s; }
+
+@keyframes drift {
+    0%, 100% {
+        transform: translate(0, 0);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.4;
+    }
+    90% {
+        opacity: 0.4;
+    }
+    25% {
+        transform: translate(20px, -30px);
+    }
+    50% {
+        transform: translate(-10px, -60px);
+    }
+    75% {
+        transform: translate(-30px, -30px);
+    }
+}
+
+/* Contenido del Panel Izquierdo */
+.login-left-content {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    max-width: 500px;
+}
+
+.logo-container {
+    margin-bottom: 40px;
+    animation: fadeInDown 0.8s ease-out;
+}
+
+.logo-large {
+    width: 120px;
+    height: auto;
+    filter: brightness(0) invert(1);
+}
+
+.branding-text {
+    margin-bottom: 60px;
+    animation: fadeInUp 0.8s ease-out 0.2s backwards;
+}
+
+.branding-title {
+    font-size: 2.5rem;
+    color: var(--blanco);
+    margin-bottom: 16px;
+    font-weight: 700;
+}
+
+.branding-subtitle {
+    font-size: 1.125rem;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.6;
+}
+
+/* Ilustración Mockup */
+.illustration {
+    animation: fadeInUp 0.8s ease-out 0.4s backwards;
+}
+
+.mockup-container {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 20px;
+}
+
+.mockup-laptop {
+    width: 240px;
+    height: 150px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px 8px 0 0;
+    padding: 8px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.laptop-screen {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--turquesa) 0%, var(--purpura) 100%);
+    border-radius: 4px;
+}
+
+.mockup-mobile {
+    width: 80px;
+    height: 140px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 6px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.mobile-screen {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--naranja-suave) 0%, var(--turquesa) 100%);
+    border-radius: 8px;
+}
+
+
+/* =====================================================
+   PANEL DERECHO (FORMULARIO)
+===================================================== */
+
+.login-right {
+    width: 50%;
+    background: var(--blanco);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px;
+}
+
+.login-form-container {
+    width: 100%;
+    max-width: 420px;
+    animation: fadeIn 1s ease-out;
+}
+
+.logo-mobile {
+    display: none;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.logo-mobile img {
+    width: 60px;
+    height: auto;
+}
+
+.login-title {
+    font-size: 1.875rem;
+    color: var(--azul-profundo);
+    margin-bottom: 8px;
+}
+
+.login-subtitle {
+    font-size: 0.9375rem;
+    color: var(--gris-medio);
+    margin-bottom: 32px;
+}
+
+/* Formulario */
+.login-form {
+    width: 100%;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--gris-oscuro);
+    margin-bottom: 8px;
+}
+
+.form-input {
+    width: 100%;
+    height: 52px;
+    padding: 0 16px;
+    font-size: 1rem;
+    font-family: var(--font-body);
+    color: var(--azul-profundo);
+    background: var(--blanco);
+    border: 1px solid var(--borde-medio);
+    border-radius: 10px;
+    transition: var(--transition-fast);
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--turquesa);
+    box-shadow: 0 0 0 3px rgba(76, 206, 213, 0.1);
+}
+
+.form-input::placeholder {
+    color: #9CA3AF;
+}
+
+/* Recordarme y Olvidaste contraseña */
+.form-group-inline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    font-size: 0.875rem;
+    color: var(--gris-oscuro);
+    cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"] {
+    margin-right: 8px;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.forgot-password {
+    font-size: 0.875rem;
+    color: var(--purpura);
+    text-decoration: none;
+    transition: var(--transition-fast);
+}
+
+.forgot-password:hover {
+    color: var(--azul-profundo);
+}
+
+/* Mensaje de Error */
+.error-message {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: rgba(170, 47, 12, 0.1);
+    border: 1px solid var(--rojo);
+    border-radius: 8px;
+    margin-bottom: 20px;
+    animation: shake 0.5s;
+}
+
+.error-icon {
+    font-size: 1.125rem;
+}
+
+.error-text {
+    font-size: 0.875rem;
+    color: var(--rojo);
+    font-weight: 500;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+}
+
+/* Botón Login */
+.btn-login {
+    width: 100%;
+    height: 52px;
+    background: linear-gradient(135deg, var(--turquesa) 0%, var(--purpura) 100%);
+    color: var(--blanco);
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: var(--font-body);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-login:hover {
+    transform: scale(1.02);
+    filter: brightness(1.1);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-login:active {
+    transform: scale(0.98);
+}
+
+.btn-login:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.btn-loader {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: var(--blanco);
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Footer */
+.login-footer {
+    text-align: center;
+    margin-top: 24px;
+}
+
+.footer-text {
+    font-size: 0.875rem;
+    color: var(--gris-medio);
+}
+
+.footer-link {
+    color: var(--purpura);
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--transition-fast);
+}
+
+.footer-link:hover {
+    color: var(--azul-profundo);
+}
+
+
+/* =====================================================
+   ANIMACIONES GLOBALES
+===================================================== */
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 1024px) {
+    .login-left {
+        width: 40%;
+        padding: 40px;
+    }
+    
+    .login-right {
+        width: 60%;
+        padding: 40px;
+    }
+    
+    .branding-title {
+        font-size: 2rem;
+    }
+    
+    .branding-subtitle {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .login-container {
+        flex-direction: column;
+    }
+    
+    .login-left {
+        width: 100%;
+        min-height: 40vh;
+        padding: 40px 20px;
+    }
+    
+    .login-right {
+        width: 100%;
+        padding: 40px 20px;
+    }
+    
+    .logo-mobile {
+        display: block;
+    }
+    
+    .logo-container {
+        display: none;
+    }
+    
+    .branding-title {
+        font-size: 1.75rem;
+    }
+    
+    .branding-subtitle {
+        font-size: 0.9375rem;
+    }
+    
+    .illustration {
+        display: none;
+    }
+    
+    .orbit-container {
+        width: 400px;
+        height: 400px;
+    }
+}
