@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recordatorios - CRM Forja Digital AE</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="dashboard-page">
+    
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <img src="LOGO COLOR.png" alt="Forja Digital AE" class="sidebar-logo">
+            <h1 class="sidebar-title">CRM Forja</h1>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <a href="dashboard.html" class="nav-item">
+                <i data-lucide="layout-dashboard"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="leads.html" class="nav-item">
+                <i data-lucide="users"></i>
+                <span>Leads</span>
+            </a>
+            <a href="pipeline.html" class="nav-item">
+                <i data-lucide="target"></i>
+                <span>Pipeline</span>
+            </a>
+            <a href="interacciones.html" class="nav-item">
+                <i data-lucide="message-square"></i>
+                <span>Interacciones</span>
+            </a>
+            <a href="propuestas.html" class="nav-item">
+                <i data-lucide="file-text"></i>
+                <span>Propuestas</span>
+            </a>
+            <a href="recordatorios.html" class="nav-item active">
+                <i data-lucide="bell"></i>
+                <span>Recordatorios</span>
+            </a>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <button onclick="logout()" class="btn-logout">
+                <i data-lucide="log-out"></i>
+                <span>Cerrar Sesión</span>
+            </button>
+        </div>
+    </aside>
+    
+    <!-- Main Content -->
+    <div class="main-wrapper">
+        
+        <!-- Header -->
+        <header class="header">
+            <div class="header-search">
+                <i data-lucide="search"></i>
+                <input type="text" placeholder="Buscar recordatorios..." id="searchInput">
+            </div>
+            
+            <div class="header-actions">
+                <button class="header-btn" id="syncBtn">
+                    <i data-lucide="refresh-cw"></i>
+                </button>
+                
+                <button class="header-btn notifications">
+                    <i data-lucide="bell"></i>
+                    <span class="badge">3</span>
+                </button>
+                
+                <div class="user-menu">
+                    <div class="user-avatar">
+                        <span id="userInitials">AF</span>
+                    </div>
+                    <div class="user-info">
+                        <span class="user-name" id="userName">Administrador Forja</span>
+                        <span class="user-role" id="userRole">Admin</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Content Area -->
+        <main class="content">
+            
+            <!-- Page Header -->
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Recordatorios y Tareas</h1>
+                    <p class="page-subtitle">Gestiona tus seguimientos y actividades pendientes</p>
+                </div>
+                <button class="btn-primary" onclick="openAddReminderModal()">
+                    <i data-lucide="plus"></i>
+                    Nuevo Recordatorio
+                </button>
+            </div>
+            
+            <!-- Stats Cards -->
+            <div class="reminders-stats">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: rgba(170, 47, 12, 0.1); color: #AA2F0C;">
+                        <i data-lucide="alert-circle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-label">Vencidos</span>
+                        <span class="stat-value">2</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: rgba(238, 128, 40, 0.1); color: #EE8028;">
+                        <i data-lucide="clock"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-label">Hoy</span>
+                        <span class="stat-value">3</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: rgba(76, 206, 213, 0.1); color: #4CCED5;">
+                        <i data-lucide="calendar"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-label">Esta Semana</span>
+                        <span class="stat-value">4</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: rgba(16, 185, 129, 0.1); color: #10B981;">
+                        <i data-lucide="check-circle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-label">Completados</span>
+                        <span class="stat-value">12</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Filters -->
+            <div class="reminders-filters">
+                <div class="filter-tabs">
+                    <button class="filter-tab active" data-filter="all">Todos</button>
+                    <button class="filter-tab" data-filter="vencido">Vencidos</button>
+                    <button class="filter-tab" data-filter="hoy">Hoy</button>
+                    <button class="filter-tab" data-filter="semana">Esta Semana</button>
+                    <button class="filter-tab" data-filter="completado">Completados</button>
+                </div>
+                
+                <div class="filter-group">
+                    <i data-lucide="tag"></i>
+                    <select id="filterPriority" class="filter-select">
+                        <option value="">Todas las prioridades</option>
+                        <option value="alta">Alta</option>
+                        <option value="media">Media</option>
+                        <option value="baja">Baja</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Reminders List -->
+            <div class="reminders-list">
+                
+                <!-- Recordatorio 1 - Vencido -->
+                <div class="reminder-item" data-status="vencido" data-priority="alta">
+                    <div class="reminder-checkbox">
+                        <input type="checkbox" id="reminder1">
+                        <label for="reminder1"></label>
+                    </div>
+                    
+                    <div class="reminder-content">
+                        <div class="reminder-header">
+                            <h4 class="reminder-title">Seguimiento propuesta Tech Solutions</h4>
+                            <div class="reminder-badges">
+                                <span class="priority-badge badge-alta">Alta</span>
+                                <span class="status-badge badge-vencido">Vencido</span>
+                            </div>
+                        </div>
+                        
+                        <p class="reminder-description">Llamar para conocer estado de la propuesta enviada la semana pasada</p>
+                        
+                        <div class="reminder-meta">
+                            <span class="reminder-date overdue">
+                                <i data-lucide="calendar"></i>
+                                Ayer, 10:00 AM
+                            </span>
+                            <span class="reminder-client">
+                                <i data-lucide="building"></i>
+                                Tech Solutions SA
+                            </span>
+                            <span class="reminder-user">
+                                <div class="reminder-avatar" style="background: #27325A;">JP</div>
+                                Juan Pérez
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="reminder-actions">
+                        <button class="btn-icon" onclick="editReminder(1)">
+                            <i data-lucide="edit"></i>
+                        </button>
+                        <button class="btn-icon btn-danger" onclick="deleteReminder(1)">
+                            <i data-lucide="trash-2"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Recordatorio 2 - Vencido -->
+                <div class="reminder-item" data-status="vencido" data-priority="media">
+                    <div class="reminder-checkbox">
+                        <input type="checkbox" id="reminder2">
+                        <label for="reminder2"></label>
+                    </div>
+                    
+                    <div class="reminder-content">
+                        <div class="reminder-header">
+                            <h4 class="reminder-title">Enviar referencias solicitadas</h4>
+                            <div class="reminder-badges">
+                                <span class="priority-badge badge-media">Media</span>
+                                <span class="status-badge badge-vencido">Vencido</span>
+                            </div>
+                        </div>
+                        
+                        <p class="reminder-description">Cliente solicitó casos de éxito en su industria</p>
+                        
+                        <div class="reminder-meta">
+                            <span class="reminder-date overdue">
+                                <i data-lucide="calendar"></i>
+                                23/1/2024, 2:00 PM
+                            </span>
+                            <span class="reminder-client">
+                                <i data-lucide="building"></i>
+                                Global Systems
+                            </span>
+                            <span class="reminder-user">
+                                <div class="reminder-avatar" style="background: #8560C0;">MG</div>
+                                María González
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="reminder-actions">
+                        <button class="btn-icon" onclick="editReminder(2)">
+                            <i data-lucide="edit"></i>
+                        </button>
+                        <button class="btn-icon btn-danger" onclick="deleteReminder(2)">
+                            <i data-lucide="trash-2"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Recordatorio 3 - Hoy -->
+                <div class="reminder-item" data-status="hoy" data-priority="alta">
+                    <div class="reminder-checkbox">
+                        <input type="checkbox" id="reminder3">
+                        <label for="reminder3"></label>
+                    </div>
+                    
+                    <div class="reminder-content">
+                        <div class="reminder-header">
+                            <h4 class="reminder-title">Reunión demo producto Innovatech</h4>
+                            <div class="reminder-badges">
+                                <span class="priority-badge badge-alta">Alta</span>
+                                <span class="status-badge badge-hoy">Hoy</span>
+                            </div>
+                        </div>
+                        
+                        <p class="reminder-description">Presentación del CRM y funcionalidades principales</p>
+                        
+                        <div class="reminder-meta">
+                            <span class="reminder-date today">
+                                <i data-lucide="calendar"></i>
+                                Hoy, 3:00 PM
+                            </span>
+                            <span class="reminder-client">
+                                <i data-lucide="building"></i>
+                                Innovatech Corp
+                            </span>
+                            <span class="reminder-user">
+                                <div class="reminder-avatar" style="background: #EE8028;">AM</div>
+                                Ana Martínez
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="reminder-actions">
+                        <button class="btn-icon" onclick="editReminder(3)">
+                            <i data-lucide="edit"></i>
+                        </button>
+                        <button class="btn-icon btn-danger" onclick="deleteReminder(3)">
+                            <i data-lucide="trash-2"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Recordatorio 4 - Hoy -->
+                <div class="reminder-item" data-status="hoy" data-priority="media">
+                    <div class="reminder-checkbox">
+                        <input type="checkbox" id="reminder4">
+                        <label for="reminder4"></label>
+                    </div>
+                    
+                    <div class="reminder-content">
+                        <div class="reminder-header">
+                            <h4 class="reminder-title">Preparar propuesta Digital Partners</h4>
+                            <div class="reminder-badges">
+                                <span class="priority-badge badge-media">Media</span>
+                                <span class="status-badge badge-hoy">Hoy</span>
+                            </div>
+                        </div>
+                        
+                        <p class="reminder-description">Elaborar documento con cotización y términos</p>
+                        
+                        <div class="reminder-meta">
+                            <span class="reminder-date today">
+                                <i data-lucide="calendar"></i>
+                                Hoy, 5:00 PM
+                            </span>
+                            <span class="reminder-client">
+                                <i data-lucide="building"></i>
+                                Digital Partners
+                            </span>
+                            <span class="reminder-user">
+                                <div class="reminder-avatar" style="background: #4CCED5;">LF</div>
+                                Luis Fernández
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="reminder-actions">
+                        <button class="btn-icon" onclick="editReminder(4)">
+                            <i data-lucide="edit"></i>
+                        </button>
+                        <button class="btn-icon btn-danger" onclick="deleteReminder(4)">
+                            <i data-lucide="trash-2"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Recordatorio 5 - Hoy -->
+                <div class="reminder-item" data-status="hoy" data-priority="baja">
+                    <div class="reminder-checkbox">
+                        <input type="checkbox" id="reminder5">
+                        <label for="reminder5"></label>
+                    </div>
+                    
+                    <div class="reminder-content">
+                        <div class="reminder-header">
+                            <h4 class="reminder-title">Actualizar información de contacto</h4>
+                            <div class="reminder-badges">
+                                <span class="priority-badge badge-baja">Baja</span>
+                                <span class="status-badge badge-hoy">Hoy</span>
+                            </div>
+                        </div>
+                        
+                        <p class="reminder-description">Verificar datos de contacto de leads recientes</p>
+                        
+                        <div class="reminder-meta">
+                            <span class="reminder-date today">
+                                <i data-lucide="calendar"></i>
+                                Hoy, 6:00 PM
+                            </span>
+                            <span class="reminder-client">
+                                <i data-lucide="building"></i>
+                                Varios clientes
+                            </span>
+                            <span class="reminder-user">
+                                <div class="reminder-avatar" style="background: #8560C0;">MG</div>
+                                María González
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="reminder-actions">
+                        <button class="btn-icon" onclick="editReminder(5)">
+                            <i data-lucide="edit"></i>
+                        </button>
+                        <button class="btn-icon btn-danger" onclick="deleteReminder(5)">
+                            <i data-lucide="trash-2"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Recordatorio 6 - Esta Semana -->
+                <div class="reminder-item" data-status="semana" data-priority="alta">
+                    <div class="reminder-checkbox">
+                        <input type="checkbox" id="reminder6">
+                        <label for="reminder6"></label>
+                    </div>
+                    
+                    <div class="reminder-content">
+                        <div class="reminder-header">
+                            <h4 class="reminder-title">Negociación contrato Global Systems</h4>
+                            <div class="reminder-badges">
+                                <span class="priority-badge badge-alta">Alta</span>
+                                <span class="status-badge badge-semana">Esta Semana</span>
+                            </div>
+                        </div>
+                        
+                        <p class="reminder-description">Reunión para cerrar términos finales del contrato</p>
+                        
+                        <div class="reminder-meta">
+                            <span class="reminder-date upcoming">
+                                <i data-lucide="calendar"></i>
+                                27/2/2024, 10:00 AM
+                            </span>
+                            <span class="reminder-client">
+                                <i data-lucide="building"></i>
+                                Global Systems
+                            </span>
+                            <span class="reminder-user">
+                                <div class="reminder-avatar" style="background: #EE8028;">ST</div>
+                                Sofía Torres
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="reminder-actions">
+                        <button class="btn-icon" onclick="editReminder(6)">
+                            <i data-lucide="edit"></i>
+                        </button>
+                        <button class="btn-icon btn-danger" onclick="deleteReminder(6)">
+                            <i data-lucide="trash-2"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Recordatorio 7 - Esta Semana -->
+                <div class="reminder-item" data-status="semana" data-priority="media">
+                    <div class="reminder-checkbox">
+                        <input type="checkbox" id="reminder7">
+                        <label for="reminder7"></label>
+                    </div>
+                    
+                    <div class="reminder-content">
+                        <div class="reminder-header">
+                            <h4 class="reminder-title">Revisión trimestral de pipeline</h4>
+                            <div class="reminder-badges">
+                                <span class="priority-badge badge-media">Media</span>
+                                <span class="status-badge badge-semana">Esta Semana</span>
+                            </div>
+                        </div>
+                        
+                        <p class="reminder-description">Análisis de oportunidades y proyecciones Q1</p>
+                        
+                        <div class="reminder-meta">
+                            <span class="reminder-date upcoming">
+                                <i data-lucide="calendar"></i>
+                                28/2/2024, 9:00 AM
+                            </span>
+                            <span class="reminder-client">
+                                <i data-lucide="building"></i>
+                                Interno
+                            </span>
+                            <span class="reminder-user">
+                                <div class="reminder-avatar" style="background: #27325A;">JP</div>
+                                Juan Pérez
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="reminder-actions">
+                        <button class="btn-icon" onclick="editReminder(7)">
+                            <i data-lucide="edit"></i>
+                        </button>
+                        <button class="btn-icon btn-danger" onclick="deleteReminder(7)">
+                            <i data-lucide="trash-2"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Recordatorio 8 - Completado -->
+                <div class="reminder-item completed" data-status="completado" data-priority="alta">
+                    <div class="reminder-checkbox">
+                        <input type="checkbox" id="reminder8" checked>
+                        <label for="reminder8"></label>
+                    </div>
+                    
+                    <div class="reminder-content">
+                        <div class="reminder-header">
+                            <h4 class="reminder-title">Enviar propuesta Tech Solutions</h4>
+                            <div class="reminder-badges">
+                                <span class="priority-badge badge-alta">Alta</span>
+                                <span class="status-badge badge-completado">Completado</span>
+                            </div>
+                        </div>
+                        
+                        <p class="reminder-description">Documento de propuesta formal enviado</p>
+                        
+                        <div class="reminder-meta">
+                            <span class="reminder-date completed-date">
+                                <i data-lucide="check-circle"></i>
+                                Completado 19/1/2024
+                            </span>
+                            <span class="reminder-client">
+                                <i data-lucide="building"></i>
+                                Tech Solutions SA
+                            </span>
+                            <span class="reminder-user">
+                                <div class="reminder-avatar" style="background: #27325A;">JP</div>
+                                Juan Pérez
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="reminder-actions">
+                        <button class="btn-icon btn-danger" onclick="deleteReminder(8)">
+                            <i data-lucide="trash-2"></i>
+                        </button>
+                    </div>
+                </div>
+                
+            </div>
+            
+        </main>
+        
+    </div>
+    
+    <!-- Modal: Nuevo Recordatorio -->
+    <div id="reminderModal" class="modal" style="display: none;">
+        <div class="modal-overlay" onclick="closeReminderModal()"></div>
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2 class="modal-title">Nuevo Recordatorio</h2>
+                <button class="modal-close" onclick="closeReminderModal()">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            
+            <form class="modal-form" id="reminderForm" onsubmit="saveReminder(event)">
+                <div class="form-group">
+                    <label class="form-label">Título *</label>
+                    <input type="text" class="form-input" id="reminderTitle" required placeholder="Ej: Llamar a cliente...">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Descripción</label>
+                    <textarea class="form-input" id="reminderDescription" rows="3" placeholder="Describe la tarea..."></textarea>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Fecha *</label>
+                        <input type="date" class="form-input" id="reminderDate" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Hora *</label>
+                        <input type="time" class="form-input" id="reminderTime" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Prioridad</label>
+                        <select class="form-input" id="reminderPriority">
+                            <option value="media">Media</option>
+                            <option value="alta">Alta</option>
+                            <option value="baja">Baja</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Cliente</label>
+                        <select class="form-input" id="reminderClient">
+                            <option value="">Seleccionar cliente</option>
+                            <option value="tech">Tech Solutions SA</option>
+                            <option value="innovatech">Innovatech Corp</option>
+                            <option value="digital">Digital Partners</option>
+                            <option value="global">Global Systems</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" onclick="closeReminderModal()">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn-primary">
+                        <i data-lucide="save"></i>
+                        Guardar Recordatorio
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="app.js"></script>
+    <script>
+        lucide.createIcons();
+        
+        if (!checkAuth()) {
+            window.location.href = 'index.html';
+        }
+        
+        const user = getCurrentUser();
+        document.getElementById('userName').textContent = user.name || 'Usuario';
+        document.getElementById('userRole').textContent = user.role || 'Usuario';
+        const initials = user.name 
+            ? user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()
+            : 'U';
+        document.getElementById('userInitials').textContent = initials;
+        
+        // Set fecha y hora actual
+        const today = new Date();
+        const dateStr = today.toISOString().split('T')[0];
+        const timeStr = today.toTimeString().slice(0,5);
+        document.getElementById('reminderDate').value = dateStr;
+        document.getElementById('reminderTime').value = timeStr;
+        
+        function openAddReminderModal() {
+            document.getElementById('reminderModal').style.display = 'flex';
+            setTimeout(() => lucide.createIcons(), 10);
+        }
+        
+        function closeReminderModal() {
+            document.getElementById('reminderModal').style.display = 'none';
+        }
+        
+        function saveReminder(event) {
+            event.preventDefault();
+            alert('Recordatorio guardado exitosamente');
+            closeReminderModal();
+        }
+        
+        function editReminder(id) {
+            openAddReminderModal();
+        }
+        
+        function deleteReminder(id) {
+            if (confirm('¿Estás seguro de eliminar este recordatorio?')) {
+                alert('Recordatorio eliminado');
+            }
+        }
+        
+        // Filter tabs
+        const filterTabs = document.querySelectorAll('.filter-tab');
+        filterTabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                filterTabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                const filter = this.dataset.filter;
+                const items = document.querySelectorAll('.reminder-item');
+                
+                items.forEach(item => {
+                    const status = item.dataset.status;
+                    item.style.display = (filter === 'all' || status === filter) ? 'flex' : 'none';
+                });
+            });
+        });
+        
+        // Priority filter
+        document.getElementById('filterPriority').addEventListener('change', function() {
+            const priority = this.value;
+            const items = document.querySelectorAll('.reminder-item');
+            
+            items.forEach(item => {
+                const itemPriority = item.dataset.priority;
+                if (!priority || itemPriority === priority) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+        
+        // Búsqueda
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const items = document.querySelectorAll('.reminder-item');
+            
+            items.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                item.style.display = text.includes(searchTerm) ? 'flex' : 'none';
+            });
+        });
+        
+        // Checkbox functionality
+        document.querySelectorAll('.reminder-checkbox input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const reminderItem = this.closest('.reminder-item');
+                if (this.checked) {
+                    reminderItem.classList.add('completed');
+                } else {
+                    reminderItem.classList.remove('completed');
+                }
+            });
+        });
+        
+        document.getElementById('syncBtn').addEventListener('click', function() {
+            const icon = this.querySelector('i');
+            icon.style.animation = 'spin 1s linear';
+            setTimeout(() => icon.style.animation = '', 1000);
+        });
+    </script>
+    
+</body>
+</html>

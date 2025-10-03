@@ -2322,3 +2322,334 @@ select.form-input {
         grid-template-columns: 1fr;
     }
 }
+
+/* =====================================================
+   RECORDATORIOS PAGE STYLES
+===================================================== */
+
+.reminders-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.reminders-filters {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+/* Filter Tabs */
+.filter-tabs {
+    display: flex;
+    gap: 8px;
+}
+
+.filter-tab {
+    padding: 8px 16px;
+    background: transparent;
+    border: 1px solid var(--borde);
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--gris-oscuro);
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.filter-tab:hover {
+    background: var(--gris-claro);
+}
+
+.filter-tab.active {
+    background: var(--turquesa);
+    border-color: var(--turquesa);
+    color: white;
+}
+
+/* Reminders List */
+.reminders-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.reminder-item {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition-base);
+    border-left: 4px solid transparent;
+}
+
+.reminder-item:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.reminder-item[data-status="vencido"] {
+    border-left-color: #AA2F0C;
+}
+
+.reminder-item[data-status="hoy"] {
+    border-left-color: #EE8028;
+}
+
+.reminder-item[data-status="semana"] {
+    border-left-color: #4CCED5;
+}
+
+.reminder-item.completed {
+    opacity: 0.6;
+    border-left-color: #10B981;
+}
+
+.reminder-item.completed .reminder-title {
+    text-decoration: line-through;
+}
+
+/* Checkbox */
+.reminder-checkbox {
+    flex-shrink: 0;
+    margin-top: 4px;
+}
+
+.reminder-checkbox input[type="checkbox"] {
+    display: none;
+}
+
+.reminder-checkbox label {
+    display: block;
+    width: 24px;
+    height: 24px;
+    border: 2px solid var(--borde-medio);
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    transition: var(--transition-fast);
+}
+
+.reminder-checkbox label:hover {
+    border-color: var(--turquesa);
+}
+
+.reminder-checkbox input[type="checkbox"]:checked + label {
+    background: var(--turquesa);
+    border-color: var(--turquesa);
+}
+
+.reminder-checkbox input[type="checkbox"]:checked + label::after {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 3px;
+    width: 6px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+/* Reminder Content */
+.reminder-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.reminder-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.reminder-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--azul-profundo);
+    line-height: 1.4;
+}
+
+.reminder-badges {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.priority-badge {
+    padding: 3px 10px;
+    border-radius: 10px;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-badge {
+    padding: 3px 10px;
+    border-radius: 10px;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.badge-vencido {
+    background: rgba(170, 47, 12, 0.1);
+    color: #AA2F0C;
+}
+
+.badge-hoy {
+    background: rgba(238, 128, 40, 0.1);
+    color: #EE8028;
+}
+
+.badge-semana {
+    background: rgba(76, 206, 213, 0.1);
+    color: #4CCED5;
+}
+
+.badge-completado {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10B981;
+}
+
+.reminder-description {
+    font-size: 0.875rem;
+    color: var(--gris-medio);
+    line-height: 1.5;
+    margin-bottom: 12px;
+}
+
+.reminder-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+}
+
+.reminder-date {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8125rem;
+    color: var(--gris-medio);
+}
+
+.reminder-date i {
+    width: 14px;
+    height: 14px;
+}
+
+.reminder-date.overdue {
+    color: #AA2F0C;
+    font-weight: 600;
+}
+
+.reminder-date.today {
+    color: #EE8028;
+    font-weight: 600;
+}
+
+.reminder-date.upcoming {
+    color: #4CCED5;
+}
+
+.reminder-date.completed-date {
+    color: #10B981;
+}
+
+.reminder-client {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8125rem;
+    color: var(--gris-medio);
+}
+
+.reminder-client i {
+    width: 14px;
+    height: 14px;
+}
+
+.reminder-user {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8125rem;
+    color: var(--gris-medio);
+}
+
+.reminder-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 0.625rem;
+}
+
+.reminder-actions {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+/* Responsive Recordatorios */
+@media (max-width: 1024px) {
+    .reminders-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .reminders-filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .filter-tabs {
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+}
+
+@media (max-width: 768px) {
+    .reminders-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .reminder-item {
+        flex-direction: column;
+    }
+    
+    .reminder-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .reminder-badges {
+        flex-wrap: wrap;
+    }
+    
+    .reminder-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .reminder-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+}
