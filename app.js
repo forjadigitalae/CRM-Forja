@@ -49,6 +49,7 @@ if (loginForm) {
 }
 
 // Función principal de login
+// Función principal de login (VERSION TEMPORAL SIN GOOGLE SHEETS)
 async function login(email, password) {
     const loginBtn = document.getElementById('loginBtn');
     const btnText = loginBtn.querySelector('.btn-text');
@@ -62,21 +63,13 @@ async function login(email, password) {
     errorMessage.style.display = 'none';
     
     try {
-        // Construir URL para Google Sheets API
-        const url = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SPREADSHEET_ID}/values/${CONFIG.SHEET_USERS}!A:D?key=${CONFIG.API_KEY}`;
+        // Usuarios hardcodeados temporalmente
+        const users = [
+            ['forjadigitalae@gmail.com', 'admin123', 'Administrador Forja', 'Admin']
+        ];
         
-        // Fetch datos de usuarios
-        const response = await fetch(url);
-        
-        if (!response.ok) {
-            throw new Error('Error al conectar con Google Sheets');
-        }
-        
-        const data = await response.json();
-        const rows = data.values;
-        
-        // La primera fila son los headers, así que empezamos desde index 1
-        const users = rows.slice(1);
+        // Pequeña pausa para simular API
+        await new Promise(resolve => setTimeout(resolve, 800));
         
         // Buscar usuario que coincida
         const user = users.find(row => {
@@ -90,13 +83,9 @@ async function login(email, password) {
             localStorage.setItem('userRole', user[3]);
             localStorage.setItem('loginTime', new Date().toISOString());
             
-            // Pequeña pausa para efecto visual
-            await new Promise(resolve => setTimeout(resolve, 800));
-            
             // Redirigir a dashboard
             window.location.href = 'dashboard.html';
         } else {
-            // Credenciales inválidas
             throw new Error('Credenciales inválidas');
         }
         
