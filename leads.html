@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leads - CRM Forja Digital AE</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="dashboard-page">
+    
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <img src="LOGO COLOR.png" alt="Forja Digital AE" class="sidebar-logo">
+            <h1 class="sidebar-title">CRM Forja</h1>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <a href="dashboard.html" class="nav-item">
+                <i data-lucide="layout-dashboard"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="leads.html" class="nav-item active">
+                <i data-lucide="users"></i>
+                <span>Leads</span>
+            </a>
+            <a href="pipeline.html" class="nav-item">
+                <i data-lucide="target"></i>
+                <span>Pipeline</span>
+            </a>
+            <a href="interacciones.html" class="nav-item">
+                <i data-lucide="message-square"></i>
+                <span>Interacciones</span>
+            </a>
+            <a href="propuestas.html" class="nav-item">
+                <i data-lucide="file-text"></i>
+                <span>Propuestas</span>
+            </a>
+            <a href="recordatorios.html" class="nav-item">
+                <i data-lucide="bell"></i>
+                <span>Recordatorios</span>
+            </a>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <button onclick="logout()" class="btn-logout">
+                <i data-lucide="log-out"></i>
+                <span>Cerrar Sesión</span>
+            </button>
+        </div>
+    </aside>
+    
+    <!-- Main Content -->
+    <div class="main-wrapper">
+        
+        <!-- Header -->
+        <header class="header">
+            <div class="header-search">
+                <i data-lucide="search"></i>
+                <input type="text" placeholder="Buscar por nombre, empresa o email..." id="searchInput">
+            </div>
+            
+            <div class="header-actions">
+                <button class="header-btn" id="syncBtn">
+                    <i data-lucide="refresh-cw"></i>
+                </button>
+                
+                <button class="header-btn notifications">
+                    <i data-lucide="bell"></i>
+                    <span class="badge">3</span>
+                </button>
+                
+                <div class="user-menu">
+                    <div class="user-avatar">
+                        <span id="userInitials">AF</span>
+                    </div>
+                    <div class="user-info">
+                        <span class="user-name" id="userName">Administrador Forja</span>
+                        <span class="user-role" id="userRole">Admin</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Content Area -->
+        <main class="content">
+            
+            <!-- Page Header -->
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Gestión de Leads</h1>
+                    <p class="page-subtitle">Administra y da seguimiento a tus prospectos</p>
+                </div>
+                <button class="btn-primary" onclick="openAddLeadModal()">
+                    <i data-lucide="plus"></i>
+                    Nuevo Lead
+                </button>
+            </div>
+            
+            <!-- Stats Cards -->
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: rgba(76, 206, 213, 0.1); color: #4CCED5;">
+                        <i data-lucide="users"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-label">Total Leads</span>
+                        <span class="stat-value" id="totalLeadsCount">5</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: rgba(115, 207, 206, 0.1); color: #73CFCE;">
+                        <i data-lucide="user-plus"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-label">Nuevos</span>
+                        <span class="stat-value" id="newLeadsCount">1</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: rgba(133, 96, 192, 0.1); color: #8560C0;">
+                        <i data-lucide="check-circle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-label">Calificados</span>
+                        <span class="stat-value" id="qualifiedLeadsCount">2</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: rgba(16, 185, 129, 0.1); color: #10B981;">
+                        <i data-lucide="trending-up"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-label">Convertidos</span>
+                        <span class="stat-value" id="convertedLeadsCount">0</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Filters Bar -->
+            <div class="filters-bar">
+                <div class="filters-left">
+                    <div class="filter-group">
+                        <i data-lucide="filter"></i>
+                        <select id="filterEstado" class="filter-select">
+                            <option value="">Todos los estados</option>
+                            <option value="Nuevo">Nuevo</option>
+                            <option value="Contactado">Contactado</option>
+                            <option value="Calificado">Calificado</option>
+                            <option value="Convertido">Convertido</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <i data-lucide="tag"></i>
+                        <select id="filterPrioridad" class="filter-select">
+                            <option value="">Todas las prioridades</option>
+                            <option value="Alta">Alta</option>
+                            <option value="Media">Media</option>
+                            <option value="Baja">Baja</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="filters-right">
+                    <button class="btn-secondary">
+                        <i data-lucide="download"></i>
+                        Exportar
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Leads Table -->
+            <div class="table-card">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Empresa</th>
+                            <th>Contacto</th>
+                            <th>Estado</th>
+                            <th>Prioridad</th>
+                            <th>Valor Est.</th>
+                            <th>Asignado a</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leadsTableBody">
+                        <!-- Datos de ejemplo -->
+                        <tr>
+                            <td>
+                                <div class="table-user">
+                                    <div class="table-avatar" style="background: #8560C0;">JP</div>
+                                    <span class="table-name">Juan Pérez</span>
+                                </div>
+                            </td>
+                            <td>Tech Solutions SA</td>
+                            <td>
+                                <div class="contact-icons">
+                                    <a href="mailto:juan@techsolutions.com" class="contact-btn">
+                                        <i data-lucide="mail"></i>
+                                    </a>
+                                    <a href="tel:+573001234567" class="contact-btn">
+                                        <i data-lucide="phone"></i>
+                                    </a>
+                                </div>
+                            </td>
+                            <td><span class="badge-status badge-calificado">Calificado</span></td>
+                            <td><span class="badge-priority badge-alta">Alta</span></td>
+                            <td class="table-value">$50,000</td>
+                            <td>María González</td>
+                            <td>
+                                <div class="table-actions">
+                                    <button class="btn-icon" onclick="viewLead(1)">
+                                        <i data-lucide="eye"></i>
+                                    </button>
+                                    <button class="btn-icon" onclick="editLead(1)">
+                                        <i data-lucide="edit"></i>
+                                    </button>
+                                    <button class="btn-icon btn-danger" onclick="deleteLead(1)">
+                                        <i data-lucide="trash-2"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td>
+                                <div class="table-user">
+                                    <div class="table-avatar" style="background: #EE8028;">AM</div>
+                                    <span class="table-name">Ana Martínez</span>
+                                </div>
+                            </td>
+                            <td>Innovatech Corp</td>
+                            <td>
+                                <div class="contact-icons">
+                                    <a href="mailto:ana@innovatech.com" class="contact-btn">
+                                        <i data-lucide="mail"></i>
+                                    </a>
+                                    <a href="tel:+573007654321" class="contact-btn">
+                                        <i data-lucide="phone"></i>
+                                    </a>
+                                </div>
+                            </td>
+                            <td><span class="badge-status badge-contactado">Contactado</span></td>
+                            <td><span class="badge-priority badge-alta">Alta</span></td>
+                            <td class="table-value">$75,000</td>
+                            <td>Carlos Ruiz</td>
+                            <td>
+                                <div class="table-actions">
+                                    <button class="btn-icon" onclick="viewLead(2)">
+                                        <i data-lucide="eye"></i>
+                                    </button>
+                                    <button class="btn-icon" onclick="editLead(2)">
+                                        <i data-lucide="edit"></i>
+                                    </button>
+                                    <button class="btn-icon btn-danger" onclick="deleteLead(2)">
+                                        <i data-lucide="trash-2"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td>
+                                <div class="table-user">
+                                    <div class="table-avatar" style="background: #4CCED5;">LF</div>
+                                    <span class="table-name">Luis Fernández</span>
+                                </div>
+                            </td>
+                            <td>Digital Partners</td>
+                            <td>
+                                <div class="contact-icons">
+                                    <a href="mailto:luis@digitalpartners.com" class="contact-btn">
+                                        <i data-lucide="mail"></i>
+                                    </a>
+                                    <a href="tel:+573009876543" class="contact-btn">
+                                        <i data-lucide="phone"></i>
+                                    </a>
+                                </div>
+                            </td>
+                            <td><span class="badge-status badge-nuevo">Nuevo</span></td>
+                            <td><span class="badge-priority badge-media">Media</span></td>
+                            <td class="table-value">$30,000</td>
+                            <td>Ana Martínez</td>
+                            <td>
+                                <div class="table-actions">
+                                    <button class="btn-icon" onclick="viewLead(3)">
+                                        <i data-lucide="eye"></i>
+                                    </button>
+                                    <button class="btn-icon" onclick="editLead(3)">
+                                        <i data-lucide="edit"></i>
+                                    </button>
+                                    <button class="btn-icon btn-danger" onclick="deleteLead(3)">
+                                        <i data-lucide="trash-2"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td>
+                                <div class="table-user">
+                                    <div class="table-avatar" style="background: #27325A;">ST</div>
+                                    <span class="table-name">Sofía Torres</span>
+                                </div>
+                            </td>
+                            <td>Global Systems</td>
+                            <td>
+                                <div class="contact-icons">
+                                    <a href="mailto:sofia@globalsystems.com" class="contact-btn">
+                                        <i data-lucide="mail"></i>
+                                    </a>
+                                    <a href="tel:+573005551234" class="contact-btn">
+                                        <i data-lucide="phone"></i>
+                                    </a>
+                                </div>
+                            </td>
+                            <td><span class="badge-status badge-calificado">Calificado</span></td>
+                            <td><span class="badge-priority badge-alta">Alta</span></td>
+                            <td class="table-value">$100,000</td>
+                            <td>Luis Fernández</td>
+                            <td>
+                                <div class="table-actions">
+                                    <button class="btn-icon" onclick="viewLead(4)">
+                                        <i data-lucide="eye"></i>
+                                    </button>
+                                    <button class="btn-icon" onclick="editLead(4)">
+                                        <i data-lucide="edit"></i>
+                                    </button>
+                                    <button class="btn-icon btn-danger" onclick="deleteLead(4)">
+                                        <i data-lucide="trash-2"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td>
+                                <div class="table-user">
+                                    <div class="table-avatar" style="background: #AA2F0C;">MS</div>
+                                    <span class="table-name">Miguel Sánchez</span>
+                                </div>
+                            </td>
+                            <td>StartUp Innovadora</td>
+                            <td>
+                                <div class="contact-icons">
+                                    <a href="mailto:miguel@startup.com" class="contact-btn">
+                                        <i data-lucide="mail"></i>
+                                    </a>
+                                    <a href="tel:+573004445555" class="contact-btn">
+                                        <i data-lucide="phone"></i>
+                                    </a>
+                                </div>
+                            </td>
+                            <td><span class="badge-status badge-contactado">Contactado</span></td>
+                            <td><span class="badge-priority badge-media">Media</span></td>
+                            <td class="table-value">$25,000</td>
+                            <td>María González</td>
+                            <td>
+                                <div class="table-actions">
+                                    <button class="btn-icon" onclick="viewLead(5)">
+                                        <i data-lucide="eye"></i>
+                                    </button>
+                                    <button class="btn-icon" onclick="editLead(5)">
+                                        <i data-lucide="edit"></i>
+                                    </button>
+                                    <button class="btn-icon btn-danger" onclick="deleteLead(5)">
+                                        <i data-lucide="trash-2"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+        </main>
+        
+    </div>
+    
+    <!-- Modal: Agregar/Editar Lead -->
+    <div id="leadModal" class="modal" style="display: none;">
+        <div class="modal-overlay" onclick="closeLeadModal()"></div>
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">Nuevo Lead</h2>
+                <button class="modal-close" onclick="closeLeadModal()">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            
+            <form class="modal-form" id="leadForm" onsubmit="saveLead(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Nombre Contacto *</label>
+                        <input type="text" class="form-input" id="leadName" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Cargo</label>
+                        <input type="text" class="form-input" id="leadPosition">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Email *</label>
+                        <input type="email" class="form-input" id="leadEmail" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Teléfono *</label>
+                        <input type="tel" class="form-input" id="leadPhone" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Empresa</label>
+                        <input type="text" class="form-input" id="leadCompany">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Sector</label>
+                        <input type="text" class="form-input" id="leadSector">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Estado</label>
+                        <select class="form-input" id="leadStatus">
+                            <option value="Nuevo">Nuevo</option>
+                            <option value="Contactado">Contactado</option>
+                            <option value="Calificado">Calificado</option>
+                            <option value="Convertido">Convertido</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Prioridad</label>
+                        <select class="form-input" id="leadPriority">
+                            <option value="Media">Media</option>
+                            <option value="Alta">Alta</option>
+                            <option value="Baja">Baja</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Valor Estimado</label>
+                        <input type="number" class="form-input" id="leadValue" placeholder="0">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Asignado a</label>
+                        <input type="text" class="form-input" id="leadAssigned" value="Sin asignar">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Notas</label>
+                    <textarea class="form-input" id="leadNotes" rows="3"></textarea>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" onclick="closeLeadModal()">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn-primary">
+                        <i data-lucide="save"></i>
+                        Guardar Lead
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="app.js"></script>
+    <script>
+        // Inicializar iconos
+        lucide.createIcons();
+        
+        // Verificar autenticación
+        if (!checkAuth()) {
+            window.location.href = 'index.html';
+        }
+        
+        // Cargar usuario
+        const user = getCurrentUser();
+        document.getElementById('userName').textContent = user.name || 'Usuario';
+        document.getElementById('userRole').textContent = user.role || 'Usuario';
+        const initials = user.name 
+            ? user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()
+            : 'U';
+        document.getElementById('userInitials').textContent = initials;
+        
+        // Funciones del modal
+        function openAddLeadModal() {
+            document.getElementById('leadModal').style.display = 'flex';
+            document.getElementById('modalTitle').textContent = 'Nuevo Lead';
+            document.getElementById('leadForm').reset();
+            setTimeout(() => {
+                lucide.createIcons();
+            }, 10);
+        }
+        
+        function closeLeadModal() {
+            document.getElementById('leadModal').style.display = 'none';
+        }
+        
+        function editLead(id) {
+            openAddLeadModal();
+            document.getElementById('modalTitle').textContent = 'Editar Lead';
+            // Aquí cargarías los datos del lead específico
+        }
+        
+        function viewLead(id) {
+            alert('Ver detalle del lead #' + id);
+        }
+        
+        function deleteLead(id) {
+            if (confirm('¿Estás seguro de eliminar este lead?')) {
+                alert('Lead eliminado');
+            }
+        }
+        
+        function saveLead(event) {
+            event.preventDefault();
+            alert('Lead guardado exitosamente');
+            closeLeadModal();
+        }
+        
+        // Búsqueda en tiempo real
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('#leadsTableBody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        });
+        
+        // Filtros
+        document.getElementById('filterEstado').addEventListener('change', filterLeads);
+        document.getElementById('filterPrioridad').addEventListener('change', filterLeads);
+        
+        function filterLeads() {
+            const estadoFilter = document.getElementById('filterEstado').value;
+            const prioridadFilter = document.getElementById('filterPrioridad').value;
+            const rows = document.querySelectorAll('#leadsTableBody tr');
+            
+            rows.forEach(row => {
+                const estado = row.querySelector('.badge-status').textContent;
+                const prioridad = row.querySelector('.badge-priority').textContent;
+                
+                const matchEstado = !estadoFilter || estado === estadoFilter;
+                const matchPrioridad = !prioridadFilter || prioridad === prioridadFilter;
+                
+                row.style.display = (matchEstado && matchPrioridad) ? '' : 'none';
+            });
+        }
+        
+        // Botón sync
+        document.getElementById('syncBtn').addEventListener('click', function() {
+            const icon = this.querySelector('i');
+            icon.style.animation = 'spin 1s linear';
+            setTimeout(() => {
+                icon.style.animation = '';
+            }, 1000);
+        });
+    </script>
+    
+</body>
+</html>
