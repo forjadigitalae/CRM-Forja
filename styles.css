@@ -3216,3 +3216,56 @@ select.form-input {
         position: relative;
     }
 }
+/* =====================================================
+   NOTIFICACIONES
+===================================================== */
+
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: white;
+    padding: 16px 24px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 10000;
+    transform: translateX(400px);
+    transition: transform 0.3s ease;
+}
+
+.notification.show {
+    transform: translateX(0);
+}
+
+.notification-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.notification-content i {
+    width: 20px;
+    height: 20px;
+}
+
+.notification-success {
+    border-left: 4px solid #10B981;
+}
+
+.notification-success i {
+    color: #10B981;
+}
+
+.notification-error {
+    border-left: 4px solid #AA2F0C;
+}
+
+.notification-error i {
+    color: #AA2F0C;
+}
+
+.notification-content span {
+    font-size: 0.875rem;
+    color: var(--azul-profundo);
+    font-weight: 500;
+}

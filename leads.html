@@ -696,10 +696,61 @@
         }
     }
     
-    function saveLead(event) {
+    async function saveLead(event) {
         event.preventDefault();
-        alert('Lead guardado exitosamente');
-        closeLeadModal();
+        
+        const submitBtn = event.target.querySelector('button[type="submit"]');
+        const originalBtnText = submitBtn.innerHTML;
+        
+        // Mostrar loading
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i data-lucide="loader"></i> Guardando...';
+        lucide.createIcons();
+        
+        try {
+            // Obtener datos del formulario
+            const leadData = {
+                nombre: document.getElementById('leadName').value,
+                cargo: document.getElementById('leadPosition').value,
+                email: document.getElementById('leadEmail').value,
+                telefono: document.getElementById('leadPhone').value,
+                empresa: document.getElementById('leadCompany').value,
+                sector: document.getElementById('leadSector').value,
+                estado: document.getElementById('leadStatus').value,
+                prioridad: document.getElementById('leadPriority').value,
+                valor_estimado: document.getElementById('leadValue').value || 0,
+                asignado_a: document.getElementById('leadAssigned').value,
+                notas: document.getElementById('leadNotes').value,
+                origen: 'CRM Manual'
+            };
+            
+            console.log('Guardando lead:', leadData);
+            
+            // Guardar en Google Sheets
+            const success = await addLead(leadData);
+            
+            if (success) {
+                // Cerrar modal
+                closeLeadModal();
+                
+                // Recargar tabla
+                await loadLeadsFromSheet();
+                
+                // Mostrar mensaje de éxito
+                showNotification('Lead guardado exitosamente', 'success');
+            } else {
+                throw new Error('No se pudo guardar el lead');
+            }
+            
+        } catch (error) {
+            console.error('Error guardando lead:', error);
+            showNotification('Error al guardar el lead. Intenta nuevamente.', 'error');
+            
+            // Restaurar botón
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalBtnText;
+            lucide.createIcons();
+        }
     }
     
     // Búsqueda en tiempo real
@@ -747,6 +798,41 @@
             icon.style.animation = '';
         }, 1000);
     });
+
+    // ==========================================
+    // SISTEMA DE NOTIFICACIONES
+    // ==========================================
+
+    function showNotification(message, type = 'success') {
+        // Crear elemento de notificación
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        notification.innerHTML = `
+            <div class="notification-content">
+                <i data-lucide="${type === 'success' ? 'check-circle' : 'alert-circle'}"></i>
+                <span>${message}</span>
+            </div>
+        `;
+        
+        // Agregar al body
+        document.body.appendChild(notification);
+        
+        // Inicializar iconos
+        lucide.createIcons();
+        
+        // Mostrar con animación
+        setTimeout(() => {
+            notification.classList.add('show');
+        }, 100);
+        
+        // Ocultar después de 3 segundos
+        setTimeout(() => {
+            notification.classList.remove('show');
+            setTimeout(() => {
+                notification.remove();
+            }, 300);
+        }, 3000);
+    }
     </script>    
 </body>
 </html>
