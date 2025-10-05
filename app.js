@@ -244,22 +244,27 @@ async function getLeads() {
 }
 
 async function addLead(leadData) {
+    // Obtener el próximo ID
+    const leads = await getLeads();
+    const nextId = leads.length > 0 ? Math.max(...leads.map(l => parseInt(l.id) || 0)) + 1 : 1;
+    
+    // Crear fila con datos en el ORDEN EXACTO de las columnas del Sheet
     const newRow = [
-        '', // ID se auto-genera
-        leadData.nombre,
-        leadData.cargo || '',
-        leadData.email,
-        leadData.telefono,
-        leadData.empresa || '',
-        leadData.sector || '',
-        leadData.estado || 'Nuevo',
-        leadData.prioridad || 'Media',
-        leadData.valor_estimado || 0,
-        leadData.asignado_a || 'Sin asignar',
-        leadData.notas || '',
-        new Date().toISOString().split('T')[0], // fecha_creacion
-        new Date().toISOString().split('T')[0], // fecha_actualizacion
-        leadData.origen || 'Web'
+        nextId,                                              // id
+        leadData.nombre,                                     // nombre
+        leadData.cargo || '',                                // cargo
+        leadData.email,                                      // email
+        leadData.telefono,                                   // telefono
+        leadData.empresa || '',                              // empresa
+        leadData.sector || '',                               // sector
+        leadData.estado || 'Nuevo',                          // estado
+        leadData.prioridad || 'Media',                       // prioridad
+        leadData.valor_estimado || 0,                        // valor_estimado
+        leadData.asignado_a || 'Sin asignar',               // asignado_a
+        leadData.notas || '',                                // notas
+        new Date().toISOString().split('T')[0],             // fecha_creacion
+        new Date().toISOString().split('T')[0],             // fecha_actualizacion
+        leadData.origen || 'CRM Manual'                      // origen
     ];
     
     return await writeSheetData(SHEETS.LEADS, [newRow]);

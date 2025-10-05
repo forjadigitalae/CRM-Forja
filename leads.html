@@ -639,13 +639,13 @@
                     <td>${lead.asignado_a || 'Sin asignar'}</td>
                     <td>
                         <div class="table-actions">
-                            <button class="btn-icon" onclick="viewLead(${lead.id})">
+                            <button class="btn-icon" onclick="viewLead('${lead.id}')">
                                 <i data-lucide="eye"></i>
                             </button>
-                            <button class="btn-icon" onclick="editLead(${lead.id})">
+                            <button class="btn-icon" onclick="editLead('${lead.id}')">
                                 <i data-lucide="edit"></i>
                             </button>
-                            <button class="btn-icon btn-danger" onclick="deleteLead(${lead.id})">
+                            <button class="btn-icon btn-danger" onclick="deleteLead('${lead.id}')">
                                 <i data-lucide="trash-2"></i>
                             </button>
                         </div>
@@ -680,19 +680,88 @@
         document.getElementById('leadModal').style.display = 'none';
     }
     
-    function editLead(id) {
-        openAddLeadModal();
-        document.getElementById('modalTitle').textContent = 'Editar Lead';
-        // Aquí cargarías los datos del lead específico
+    async function viewLead(id) {
+    try {
+        const leads = await getLeads();
+        const lead = leads.find(l => l.id == id);
+        
+        if (!lead) {
+            alert('Lead no encontrado');
+            return;
+        }
+        
+        // Mostrar información del lead
+        alert(`
+                DETALLE DEL LEAD
+
+                Nombre: ${lead.nombre}
+                Cargo: ${lead.cargo || 'N/A'}
+                Email: ${lead.email}
+                Teléfono: ${lead.telefono}
+                Empresa: ${lead.empresa || 'N/A'}
+                Sector: ${lead.sector || 'N/A'}
+                Estado: ${lead.estado}
+                Prioridad: ${lead.prioridad}
+                Valor Estimado: $${parseInt(lead.valor_estimado || 0).toLocaleString()}
+                Asignado a: ${lead.asignado_a || 'Sin asignar'}
+                Notas: ${lead.notas || 'Sin notas'}
+            `);
+            
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error al cargar el lead');
+        }
     }
-    
-    function viewLead(id) {
-        alert('Ver detalle del lead #' + id);
+
+    async function editLead(id) {
+        try {
+            const leads = await getLeads();
+            const lead = leads.find(l => l.id == id);
+            
+            if (!lead) {
+                alert('Lead no encontrado');
+                return;
+            }
+            
+            // Abrir modal
+            openAddLeadModal();
+            document.getElementById('modalTitle').textContent = 'Editar Lead';
+            
+            // Cargar datos en el formulario
+            document.getElementById('leadName').value = lead.nombre || '';
+            document.getElementById('leadPosition').value = lead.cargo || '';
+            document.getElementById('leadEmail').value = lead.email || '';
+            document.getElementById('leadPhone').value = lead.telefono || '';
+            document.getElementById('leadCompany').value = lead.empresa || '';
+            document.getElementById('leadSector').value = lead.sector || '';
+            document.getElementById('leadStatus').value = lead.estado || 'Nuevo';
+            document.getElementById('leadPriority').value = lead.prioridad || 'Media';
+            document.getElementById('leadValue').value = lead.valor_estimado || '';
+            document.getElementById('leadAssigned').value = lead.asignado_a || '';
+            document.getElementById('leadNotes').value = lead.notas || '';
+            
+            // Guardar el ID en un atributo del formulario para actualizaciones futuras
+            document.getElementById('leadForm').dataset.editingId = id;
+            
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error al cargar el lead');
+        }
     }
-    
-    function deleteLead(id) {
-        if (confirm('¿Estás seguro de eliminar este lead?')) {
-            alert('Lead eliminado');
+
+    async function deleteLead(id) {
+        if (!confirm('¿Estás seguro de eliminar este lead?\n\nEsta acción no se puede deshacer.')) {
+            return;
+        }
+        
+        try {
+            // Por ahora solo mostramos un mensaje
+            // La eliminación real requeriría otro endpoint en Google Apps Script
+            alert('Funcionalidad de eliminación pendiente de implementar.\n\nPor ahora debes eliminar manualmente desde Google Sheets.');
+            
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error al eliminar el lead');
         }
     }
     
@@ -727,20 +796,19 @@
             console.log('Guardando lead:', leadData);
             
             // Guardar en Google Sheets
-            const success = await addLead(leadData);
+            await addLead(leadData);
             
-            if (success) {
-                // Cerrar modal
-                closeLeadModal();
-                
-                // Recargar tabla
-                await loadLeadsFromSheet();
-                
-                // Mostrar mensaje de éxito
-                showNotification('Lead guardado exitosamente', 'success');
-            } else {
-                throw new Error('No se pudo guardar el lead');
-            }
+            // Cerrar modal
+            closeLeadModal();
+            
+            // Mostrar mensaje de éxito
+            showNotification('Lead guardado exitosamente', 'success');
+            
+            // Esperar 2 segundos para que Google Sheets procese
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
+            // Recargar tabla
+            await loadLeadsFromSheet();
             
         } catch (error) {
             console.error('Error guardando lead:', error);
