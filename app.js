@@ -3,7 +3,7 @@
 ===================================================== */
 
 const CONFIG = {
-    SPREADSHEET_ID: '1pXa3WMgoqUZd7jeXzJDAoq9H1eLkAevDhAaojT2wBNQ', // ⬅️ ACTUALIZA ESTE ID
+    SPREADSHEET_ID: '1pXa3WMgoquZd7jeXzUDAoq9HTeLkAexDhAaojT2wBNQ', // ⬅️ ACTUALIZA ESTE ID
     API_KEY: 'AIzaSyB9vU7X_Zj5L8d7c-AhdC6nduLIefhz_kY',
     SHEET_USERS: 'Usuarios',
     SHEET_LEADS: 'Leads'
@@ -149,7 +149,7 @@ function getCurrentUser() {
 
 // ⬅️ DESDE AQUÍ EMPIEZA EL CÓDIGO NUEVO
 
-const SHEET_ID = '1pXa3WMgoqUZd7jeXzJDAoq9H1eLkAevDhAaojT2wBNQ';
+const SHEET_ID = '1pXa3WMgoquZd7jeXzUDAoq9HTeLkAexDhAaojT2wBNQ';
 const API_KEY = 'AIzaSyB9vU7X_Zj5L8d7c-AhdC6nduLIefhz_kY';
 
 const SHEETS = {
