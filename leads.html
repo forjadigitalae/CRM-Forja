@@ -616,6 +616,39 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal: Confirmar Eliminación -->
+    <div id="deleteConfirmModal" class="modal" style="display: none;">
+        <div class="modal-overlay" onclick="closeDeleteConfirmModal()"></div>
+        <div class="modal-container modal-confirm">
+            <div class="modal-header-danger">
+                <div class="modal-danger-icon">
+                    <i data-lucide="alert-triangle"></i>
+                </div>
+                <h2 class="modal-title">¿Eliminar Lead?</h2>
+            </div>
+            
+            <div class="modal-confirm-content">
+                <p class="confirm-message">
+                    ¿Estás seguro de que deseas eliminar este lead?
+                </p>
+                <p class="confirm-warning">
+                    Esta acción no se puede deshacer.
+                </p>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeDeleteConfirmModal()">
+                    Cancelar
+                </button>
+                <button class="btn-danger" id="confirmDeleteBtn">
+                    <i data-lucide="trash-2"></i>
+                    Eliminar Lead
+                </button>
+            </div>
+        </div>
+    </div>
+    
     <!-- Scripts -->
     <script src="app.js"></script>
     <script>
@@ -923,19 +956,85 @@ function editLeadFromView() {
         }
     }
 
+    let leadToDelete = null;
+
     async function deleteLead(id) {
-        if (!confirm('¿Estás seguro de eliminar este lead?\n\nEsta acción no se puede deshacer.')) {
-            return;
-        }
+        leadToDelete = id;
+        
+        // Mostrar modal de confirmación
+        document.getElementById('deleteConfirmModal').style.display = 'flex';
+        setTimeout(() => lucide.createIcons(), 10);
+        
+        // Configurar el botón de confirmación
+        const confirmBtn = document.getElementById('confirmDeleteBtn');
+        confirmBtn.onclick = async function() {
+            await confirmDelete();
+        };
+    }
+
+    function closeDeleteConfirmModal() {
+        document.getElementById('deleteConfirmModal').style.display = 'none';
+        leadToDelete = null;
+    }
+
+    async function confirmDelete() {
+        if (!leadToDelete) return;
+        
+        const confirmBtn = document.getElementById('confirmDeleteBtn');
+        const originalBtnText = confirmBtn.innerHTML;
+        
+        // Mostrar loading
+        confirmBtn.disabled = true;
+        confirmBtn.innerHTML = '<i data-lucide="loader"></i> Eliminando...';
+        lucide.createIcons();
         
         try {
-            // Por ahora solo mostramos un mensaje
-            // La eliminación real requeriría otro endpoint en Google Apps Script
-            alert('Funcionalidad de eliminación pendiente de implementar.\n\nPor ahora debes eliminar manualmente desde Google Sheets.');
+            // Aquí iría la llamada a Google Apps Script para eliminar
+            // Por ahora, implementaremos eliminación básica
+            
+            await deleteLeadFromSheet(leadToDelete);
+            
+            closeDeleteConfirmModal();
+            showNotification('Lead eliminado exitosamente', 'success');
+            
+            // Esperar y recargar
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            await loadLeadsFromSheet();
             
         } catch (error) {
             console.error('Error:', error);
-            alert('Error al eliminar el lead');
+            showNotification('Error al eliminar el lead', 'error');
+            
+            // Restaurar botón
+            confirmBtn.disabled = false;
+            confirmBtn.innerHTML = originalBtnText;
+            lucide.createIcons();
+        }
+    }
+
+    async function deleteLeadFromSheet(id) {
+        try {
+            const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzE-Oy_tHdbGrpUHVMAHDXyS3fDFvDQZv-HSCQVg8EVu5EVJBIDiDbV26cxxN3tsX9hJA/exec'; // Reemplaza con tu URL
+            
+            await fetch(SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    action: 'delete',
+                    sheetName: SHEETS.LEADS,
+                    id: id
+                })
+            });
+            
+            console.log('Lead eliminado, ID:', id);
+            return true;
+            
+        } catch (error) {
+            console.error('Error eliminando lead:', error);
+            throw error;
         }
     }
     
