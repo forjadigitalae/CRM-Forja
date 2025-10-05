@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendario - CRM Forja Digital AE</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="dashboard-page">
+    
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <img src="LOGO COLOR.png" alt="Forja Digital AE" class="sidebar-logo">
+            <h1 class="sidebar-title">CRM Forja</h1>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <a href="dashboard.html" class="nav-item">
+                <i data-lucide="layout-dashboard"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="leads.html" class="nav-item">
+                <i data-lucide="users"></i>
+                <span>Leads</span>
+            </a>
+            <a href="pipeline.html" class="nav-item">
+                <i data-lucide="target"></i>
+                <span>Pipeline</span>
+            </a>
+            <a href="interacciones.html" class="nav-item">
+                <i data-lucide="message-square"></i>
+                <span>Interacciones</span>
+            </a>
+            <a href="propuestas.html" class="nav-item">
+                <i data-lucide="file-text"></i>
+                <span>Propuestas</span>
+            </a>
+            <a href="recordatorios.html" class="nav-item">
+                <i data-lucide="bell"></i>
+                <span>Recordatorios</span>
+            </a>
+            <a href="calendario.html" class="nav-item active">
+                <i data-lucide="calendar"></i>
+                <span>Calendario</span>
+            </a>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <button onclick="logout()" class="btn-logout">
+                <i data-lucide="log-out"></i>
+                <span>Cerrar Sesión</span>
+            </button>
+        </div>
+    </aside>
+    
+    <!-- Main Content -->
+    <div class="main-wrapper">
+        
+        <!-- Header -->
+        <header class="header">
+            <div class="header-search">
+                <i data-lucide="search"></i>
+                <input type="text" placeholder="Buscar eventos...">
+            </div>
+            
+            <div class="header-actions">
+                <button class="header-btn" id="syncBtn">
+                    <i data-lucide="refresh-cw"></i>
+                </button>
+                
+                <button class="header-btn notifications">
+                    <i data-lucide="bell"></i>
+                    <span class="badge">3</span>
+                </button>
+                
+                <div class="user-menu">
+                    <div class="user-avatar">
+                        <span id="userInitials">AF</span>
+                    </div>
+                    <div class="user-info">
+                        <span class="user-name" id="userName">Administrador Forja</span>
+                        <span class="user-role" id="userRole">Admin</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Content Area -->
+        <main class="content">
+            
+            <!-- Page Header -->
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Calendario de Actividades</h1>
+                    <p class="page-subtitle">Gestiona tus reuniones, llamadas y eventos</p>
+                </div>
+                <button class="btn-primary" onclick="openAddEventModal()">
+                    <i data-lucide="plus"></i>
+                    Nuevo Evento
+                </button>
+            </div>
+            
+            <!-- Calendar Controls -->
+            <div class="calendar-controls">
+                <div class="calendar-nav">
+                    <button class="btn-calendar-nav" id="prevMonth">
+                        <i data-lucide="chevron-left"></i>
+                    </button>
+                    <h2 class="calendar-month" id="currentMonth">Febrero 2024</h2>
+                    <button class="btn-calendar-nav" id="nextMonth">
+                        <i data-lucide="chevron-right"></i>
+                    </button>
+                </div>
+                
+                <div class="calendar-view-buttons">
+                    <button class="btn-view active" data-view="month">Mes</button>
+                    <button class="btn-view" data-view="week">Semana</button>
+                    <button class="btn-view" data-view="day">Día</button>
+                </div>
+                
+                <button class="btn-today" id="todayBtn">Hoy</button>
+            </div>
+            
+            <!-- Calendar Legend -->
+            <div class="calendar-legend">
+                <div class="legend-item">
+                    <span class="legend-dot" style="background: #4CCED5;"></span>
+                    <span>Reunión</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-dot" style="background: #8560C0;"></span>
+                    <span>Llamada</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-dot" style="background: #EE8028;"></span>
+                    <span>Seguimiento</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-dot" style="background: #27325A;"></span>
+                    <span>Tarea</span>
+                </div>
+            </div>
+            
+            <!-- Calendar Grid -->
+            <div class="calendar-container">
+                <div class="calendar-header">
+                    <div class="calendar-day-name">Domingo</div>
+                    <div class="calendar-day-name">Lunes</div>
+                    <div class="calendar-day-name">Martes</div>
+                    <div class="calendar-day-name">Miércoles</div>
+                    <div class="calendar-day-name">Jueves</div>
+                    <div class="calendar-day-name">Viernes</div>
+                    <div class="calendar-day-name">Sábado</div>
+                </div>
+                
+                <div class="calendar-grid" id="calendarGrid">
+                    <!-- Días se generarán dinámicamente con JavaScript -->
+                </div>
+            </div>
+            
+            <!-- Events Sidebar -->
+            <div class="events-sidebar">
+                <h3 class="events-sidebar-title">Próximos Eventos</h3>
+                <div class="events-list" id="upcomingEvents">
+                    <!-- Eventos próximos -->
+                </div>
+            </div>
+            
+        </main>
+        
+    </div>
+    
+    <!-- Modal: Nuevo Evento -->
+    <div id="eventModal" class="modal" style="display: none;">
+        <div class="modal-overlay" onclick="closeEventModal()"></div>
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2 class="modal-title" id="eventModalTitle">Nuevo Evento</h2>
+                <button class="modal-close" onclick="closeEventModal()">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            
+            <form class="modal-form" id="eventForm" onsubmit="saveEvent(event)">
+                <div class="form-group">
+                    <label class="form-label">Título del Evento *</label>
+                    <input type="text" class="form-input" id="eventTitle" required placeholder="Ej: Reunión con cliente...">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Tipo de Evento *</label>
+                    <select class="form-input" id="eventType" required>
+                        <option value="">Seleccionar tipo</option>
+                        <option value="reunion">Reunión</option>
+                        <option value="llamada">Llamada</option>
+                        <option value="seguimiento">Seguimiento</option>
+                        <option value="tarea">Tarea</option>
+                    </select>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Fecha *</label>
+                        <input type="date" class="form-input" id="eventDate" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Hora Inicio *</label>
+                        <input type="time" class="form-input" id="eventTimeStart" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Duración (minutos)</label>
+                        <input type="number" class="form-input" id="eventDuration" value="60" min="15" step="15">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Cliente/Prospecto</label>
+                        <select class="form-input" id="eventClient">
+                            <option value="">Sin asignar</option>
+                            <option value="tech">Tech Solutions SA</option>
+                            <option value="innovatech">Innovatech Corp</option>
+                            <option value="digital">Digital Partners</option>
+                            <option value="global">Global Systems</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Descripción</label>
+                    <textarea class="form-input" id="eventDescription" rows="3" placeholder="Detalles del evento..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Ubicación / Link de reunión</label>
+                    <input type="text" class="form-input" id="eventLocation" placeholder="Oficina, Zoom, Google Meet...">
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" onclick="closeEventModal()">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn-primary">
+                        <i data-lucide="save"></i>
+                        Guardar Evento
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Modal: Ver Detalle Evento -->
+    <div id="eventDetailModal" class="modal" style="display: none;">
+        <div class="modal-overlay" onclick="closeEventDetailModal()"></div>
+        <div class="modal-container modal-sm">
+            <div class="modal-header">
+                <h2 class="modal-title" id="detailEventTitle">Detalle del Evento</h2>
+                <button class="modal-close" onclick="closeEventDetailModal()">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            
+            <div class="event-detail-content">
+                <div class="event-detail-type" id="detailEventType"></div>
+                
+                <div class="event-detail-info">
+                    <div class="detail-row">
+                        <i data-lucide="calendar"></i>
+                        <span id="detailEventDate"></span>
+                    </div>
+                    <div class="detail-row">
+                        <i data-lucide="clock"></i>
+                        <span id="detailEventTime"></span>
+                    </div>
+                    <div class="detail-row" id="detailClientRow">
+                        <i data-lucide="building"></i>
+                        <span id="detailEventClient"></span>
+                    </div>
+                    <div class="detail-row" id="detailLocationRow">
+                        <i data-lucide="map-pin"></i>
+                        <span id="detailEventLocation"></span>
+                    </div>
+                </div>
+                
+                <div class="event-detail-description" id="detailEventDescription"></div>
+                
+                <div class="event-detail-actions">
+                    <button class="btn-secondary" onclick="editEventFromDetail()">
+                        <i data-lucide="edit"></i>
+                        Editar
+                    </button>
+                    <button class="btn-danger" onclick="deleteEventFromDetail()">
+                        <i data-lucide="trash-2"></i>
+                        Eliminar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="app.js"></script>
+    <script>
+        lucide.createIcons();
+        
+        if (!checkAuth()) {
+            window.location.href = 'index.html';
+        }
+        
+        const user = getCurrentUser();
+        document.getElementById('userName').textContent = user.name || 'Usuario';
+        document.getElementById('userRole').textContent = user.role || 'Usuario';
+        const initials = user.name 
+            ? user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()
+            : 'U';
+        document.getElementById('userInitials').textContent = initials;
+        
+        // Calendario
+        let currentDate = new Date();
+        let selectedEventId = null;
+        
+        // Eventos de ejemplo
+        const events = [
+            {
+                id: 1,
+                title: 'Reunión Demo Innovatech',
+                type: 'reunion',
+                date: '2024-02-26',
+                time: '15:00',
+                duration: 60,
+                client: 'Innovatech Corp',
+                description: 'Presentación del CRM y funcionalidades principales',
+                location: 'Google Meet'
+            },
+            {
+                id: 2,
+                title: 'Llamada seguimiento Tech Solutions',
+                type: 'llamada',
+                date: '2024-02-25',
+                time: '10:00',
+                duration: 30,
+                client: 'Tech Solutions SA',
+                description: 'Seguimiento estado de propuesta',
+                location: ''
+            },
+            {
+                id: 3,
+                title: 'Negociación Global Systems',
+                type: 'reunion',
+                date: '2024-02-27',
+                time: '10:00',
+                duration: 120,
+                client: 'Global Systems',
+                description: 'Reunión para cerrar términos finales del contrato',
+                location: 'Oficina cliente'
+            },
+            {
+                id: 4,
+                title: 'Preparar propuesta Digital Partners',
+                type: 'tarea',
+                date: '2024-02-26',
+                time: '17:00',
+                duration: 60,
+                client: 'Digital Partners',
+                description: 'Elaborar documento con cotización',
+                location: ''
+            },
+            {
+                id: 5,
+                title: 'Seguimiento referencias solicitadas',
+                type: 'seguimiento',
+                date: '2024-02-28',
+                time: '14:00',
+                duration: 30,
+                client: 'Global Systems',
+                description: 'Enviar casos de éxito',
+                location: ''
+            }
+        ];
+        
+        function renderCalendar() {
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            
+            // Actualizar título del mes
+            const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                              'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+            document.getElementById('currentMonth').textContent = `${monthNames[month]} ${year}`;
+            
+            // Primer día del mes y total de días
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            
+            const calendarGrid = document.getElementById('calendarGrid');
+            calendarGrid.innerHTML = '';
+            
+            // Días vacíos al inicio
+            for (let i = 0; i < firstDay; i++) {
+                const emptyDay = document.createElement('div');
+                emptyDay.className = 'calendar-day empty';
+                calendarGrid.appendChild(emptyDay);
+            }
+            
+            // Días del mes
+            const today = new Date();
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day';
+                
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                
+                // Marcar día actual
+                if (year === today.getFullYear() && 
+                    month === today.getMonth() && 
+                    day === today.getDate()) {
+                    dayElement.classList.add('today');
+                }
+                
+                dayElement.innerHTML = `
+                    <div class="day-number">${day}</div>
+                    <div class="day-events" id="events-${dateStr}"></div>
+                `;
+                
+                // Agregar eventos del día
+                const dayEvents = events.filter(e => e.date === dateStr);
+                if (dayEvents.length > 0) {
+                    dayElement.classList.add('has-events');
+                    const eventsContainer = dayElement.querySelector('.day-events');
+                    
+                    dayEvents.slice(0, 3).forEach(event => {
+                        const eventEl = document.createElement('div');
+                        eventEl.className = `calendar-event event-${event.type}`;
+                        eventEl.textContent = event.title;
+                        eventEl.onclick = (e) => {
+                            e.stopPropagation();
+                            showEventDetail(event);
+                        };
+                        eventsContainer.appendChild(eventEl);
+                    });
+                    
+                    if (dayEvents.length > 3) {
+                        const moreEl = document.createElement('div');
+                        moreEl.className = 'calendar-event-more';
+                        moreEl.textContent = `+${dayEvents.length - 3} más`;
+                        eventsContainer.appendChild(moreEl);
+                    }
+                }
+                
+                dayElement.onclick = () => {
+                    document.getElementById('eventDate').value = dateStr;
+                    openAddEventModal();
+                };
+                
+                calendarGrid.appendChild(dayElement);
+            }
+            
+            renderUpcomingEvents();
+        }
+        
+        function renderUpcomingEvents() {
+            const upcomingContainer = document.getElementById('upcomingEvents');
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            const upcoming = events
+                .filter(e => new Date(e.date) >= today)
+                .sort((a, b) => new Date(a.date + ' ' + a.time) - new Date(b.date + ' ' + b.time))
+                .slice(0, 5);
+            
+            if (upcoming.length === 0) {
+                upcomingContainer.innerHTML = '<p class="no-events">No hay eventos próximos</p>';
+                return;
+            }
+            
+            upcomingContainer.innerHTML = upcoming.map(event => {
+                const eventDate = new Date(event.date);
+                const dateStr = eventDate.toLocaleDateString('es-ES', { 
+                    day: 'numeric', 
+                    month: 'short' 
+                });
+                
+                return `
+                    <div class="upcoming-event" onclick="showEventDetail(${JSON.stringify(event).replace(/"/g, '&quot;')})">
+                        <div class="upcoming-event-dot event-${event.type}"></div>
+                        <div class="upcoming-event-content">
+                            <div class="upcoming-event-title">${event.title}</div>
+                            <div class="upcoming-event-meta">
+                                <span>${dateStr}</span>
+                                <span>${event.time}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function showEventDetail(event) {
+            selectedEventId = event.id;
+            
+            const typeColors = {
+                reunion: { bg: 'rgba(76, 206, 213, 0.1)', color: '#4CCED5', text: 'Reunión' },
+                llamada: { bg: 'rgba(133, 96, 192, 0.1)', color: '#8560C0', text: 'Llamada' },
+                seguimiento: { bg: 'rgba(238, 128, 40, 0.1)', color: '#EE8028', text: 'Seguimiento' },
+                tarea: { bg: 'rgba(39, 50, 90, 0.1)', color: '#27325A', text: 'Tarea' }
+            };
+            
+            const typeInfo = typeColors[event.type];
+            
+            document.getElementById('detailEventTitle').textContent = event.title;
+            document.getElementById('detailEventType').innerHTML = `
+                <span style="background: ${typeInfo.bg}; color: ${typeInfo.color}; padding: 4px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">
+                    ${typeInfo.text}
+                </span>
+            `;
+            
+            const eventDate = new Date(event.date);
+            document.getElementById('detailEventDate').textContent = eventDate.toLocaleDateString('es-ES', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            
+            document.getElementById('detailEventTime').textContent = `${event.time} (${event.duration} min)`;
+            
+            if (event.client) {
+                document.getElementById('detailClientRow').style.display = 'flex';
+                document.getElementById('detailEventClient').textContent = event.client;
+            } else {
+                document.getElementById('detailClientRow').style.display = 'none';
+            }
+            
+            if (event.location) {
+                document.getElementById('detailLocationRow').style.display = 'flex';
+                document.getElementById('detailEventLocation').textContent = event.location;
+            } else {
+                document.getElementById('detailLocationRow').style.display = 'none';
+            }
+            
+            document.getElementById('detailEventDescription').textContent = event.description || 'Sin descripción';
+            
+            document.getElementById('eventDetailModal').style.display = 'flex';
+            setTimeout(() => lucide.createIcons(), 10);
+        }
+        
+        function closeEventDetailModal() {
+            document.getElementById('eventDetailModal').style.display = 'none';
+            selectedEventId = null;
+        }
+        
+        function editEventFromDetail() {
+            // Aquí cargarías los datos del evento en el formulario
+            closeEventDetailModal();
+            openAddEventModal();
+        }
+        
+        function deleteEventFromDetail() {
+            if (confirm('¿Estás seguro de eliminar este evento?')) {
+                const index = events.findIndex(e => e.id === selectedEventId);
+                if (index > -1) {
+                    events.splice(index, 1);
+                    renderCalendar();
+                    closeEventDetailModal();
+                }
+            }
+        }
+        
+        function openAddEventModal() {
+            document.getElementById('eventModal').style.display = 'flex';
+            const today = new Date().toISOString().split('T')[0];
+            if (!document.getElementById('eventDate').value) {
+                document.getElementById('eventDate').value = today;
+            }
+            setTimeout(() => lucide.createIcons(), 10);
+        }
+        
+        function closeEventModal() {
+            document.getElementById('eventModal').style.display = 'none';
+            document.getElementById('eventForm').reset();
+        }
+        
+        function saveEvent(e) {
+            e.preventDefault();
+            
+            const newEvent = {
+                id: events.length + 1,
+                title: document.getElementById('eventTitle').value,
+                type: document.getElementById('eventType').value,
+                date: document.getElementById('eventDate').value,
+                time: document.getElementById('eventTimeStart').value,
+                duration: parseInt(document.getElementById('eventDuration').value),
+                client: document.getElementById('eventClient').options[document.getElementById('eventClient').selectedIndex].text,
+                description: document.getElementById('eventDescription').value,
+                location: document.getElementById('eventLocation').value
+            };
+            
+            events.push(newEvent);
+            renderCalendar();
+            closeEventModal();
+        }
+        
+        // Navegación del calendario
+        document.getElementById('prevMonth').addEventListener('click', () => {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            renderCalendar();
+        });
+        
+        document.getElementById('nextMonth').addEventListener('click', () => {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            renderCalendar();
+        });
+        
+        document.getElementById('todayBtn').addEventListener('click', () => {
+            currentDate = new Date();
+            renderCalendar();
+        });
+        
+        document.getElementById('syncBtn').addEventListener('click', function() {
+            const icon = this.querySelector('i');
+            icon.style.animation = 'spin 1s linear';
+            setTimeout(() => icon.style.animation = '', 1000);
+        });
+        
+        // Renderizar calendario inicial
+        renderCalendar();
+    </script>
+    
+</body>
+</html>
