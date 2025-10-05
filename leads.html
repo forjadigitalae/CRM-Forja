@@ -494,7 +494,128 @@
             </form>
         </div>
     </div>
-    
+    <!-- Modal: Ver Detalle Lead -->
+    <div id="viewLeadModal" class="modal" style="display: none;">
+        <div class="modal-overlay" onclick="closeViewLeadModal()"></div>
+        <div class="modal-container modal-view">
+            <div class="modal-header">
+                <h2 class="modal-title">Detalle del Lead</h2>
+                <button class="modal-close" onclick="closeViewLeadModal()">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            
+            <div class="view-lead-content">
+                <!-- Header con avatar -->
+                <div class="view-lead-header">
+                    <div class="view-avatar" id="viewAvatar">JP</div>
+                    <div class="view-header-info">
+                        <h3 class="view-name" id="viewName">-</h3>
+                        <p class="view-cargo" id="viewCargo">-</p>
+                    </div>
+                    <div class="view-badges">
+                        <span class="badge-status" id="viewEstadoBadge">-</span>
+                        <span class="badge-priority" id="viewPrioridadBadge">-</span>
+                    </div>
+                </div>
+                
+                <!-- Información de contacto -->
+                <div class="view-section">
+                    <h4 class="view-section-title">
+                        <i data-lucide="mail"></i>
+                        Información de Contacto
+                    </h4>
+                    <div class="view-grid">
+                        <div class="view-field">
+                            <label>Email</label>
+                            <a href="#" class="view-value-link" id="viewEmail">-</a>
+                        </div>
+                        <div class="view-field">
+                            <label>Teléfono</label>
+                            <a href="#" class="view-value-link" id="viewTelefono">-</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Información de empresa -->
+                <div class="view-section">
+                    <h4 class="view-section-title">
+                        <i data-lucide="building"></i>
+                        Información de Empresa
+                    </h4>
+                    <div class="view-grid">
+                        <div class="view-field">
+                            <label>Empresa</label>
+                            <span class="view-value" id="viewEmpresa">-</span>
+                        </div>
+                        <div class="view-field">
+                            <label>Sector</label>
+                            <span class="view-value" id="viewSector">-</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Información comercial -->
+                <div class="view-section">
+                    <h4 class="view-section-title">
+                        <i data-lucide="dollar-sign"></i>
+                        Información Comercial
+                    </h4>
+                    <div class="view-grid">
+                        <div class="view-field">
+                            <label>Valor Estimado</label>
+                            <span class="view-value view-value-amount" id="viewValor">-</span>
+                        </div>
+                        <div class="view-field">
+                            <label>Asignado a</label>
+                            <span class="view-value" id="viewAsignado">-</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Notas -->
+                <div class="view-section">
+                    <h4 class="view-section-title">
+                        <i data-lucide="file-text"></i>
+                        Notas
+                    </h4>
+                    <p class="view-notes" id="viewNotas">-</p>
+                </div>
+                
+                <!-- Fechas -->
+                <div class="view-section">
+                    <h4 class="view-section-title">
+                        <i data-lucide="calendar"></i>
+                        Información Adicional
+                    </h4>
+                    <div class="view-grid">
+                        <div class="view-field">
+                            <label>Fecha de Creación</label>
+                            <span class="view-value" id="viewFechaCreacion">-</span>
+                        </div>
+                        <div class="view-field">
+                            <label>Última Actualización</label>
+                            <span class="view-value" id="viewFechaActualizacion">-</span>
+                        </div>
+                        <div class="view-field">
+                            <label>Origen</label>
+                            <span class="view-value" id="viewOrigen">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeViewLeadModal()">
+                    Cerrar
+                </button>
+                <button class="btn-primary" onclick="editLeadFromView()">
+                    <i data-lucide="edit"></i>
+                    Editar
+                </button>
+            </div>
+        </div>
+    </div>
     <!-- Scripts -->
     <script src="app.js"></script>
     <script>
@@ -686,32 +807,84 @@
         const lead = leads.find(l => l.id == id);
         
         if (!lead) {
-            alert('Lead no encontrado');
+            showNotification('Lead no encontrado', 'error');
             return;
         }
         
-        // Mostrar información del lead
-        alert(`
-                DETALLE DEL LEAD
-
-                Nombre: ${lead.nombre}
-                Cargo: ${lead.cargo || 'N/A'}
-                Email: ${lead.email}
-                Teléfono: ${lead.telefono}
-                Empresa: ${lead.empresa || 'N/A'}
-                Sector: ${lead.sector || 'N/A'}
-                Estado: ${lead.estado}
-                Prioridad: ${lead.prioridad}
-                Valor Estimado: $${parseInt(lead.valor_estimado || 0).toLocaleString()}
-                Asignado a: ${lead.asignado_a || 'Sin asignar'}
-                Notas: ${lead.notas || 'Sin notas'}
-            `);
-            
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Error al cargar el lead');
-        }
+        // Guardar ID para editar desde el modal
+        currentViewingLeadId = id;
+        
+        // Avatar
+        const nameInitials = lead.nombre 
+            ? lead.nombre.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()
+            : '?';
+        const avatarColors = ['#8560C0', '#EE8028', '#4CCED5', '#27325A', '#AA2F0C'];
+        const avatarColor = avatarColors[parseInt(id) % avatarColors.length];
+        
+        document.getElementById('viewAvatar').textContent = nameInitials;
+        document.getElementById('viewAvatar').style.background = avatarColor;
+        
+        // Información básica
+        document.getElementById('viewName').textContent = lead.nombre || '-';
+        document.getElementById('viewCargo').textContent = lead.cargo || 'Sin cargo';
+        
+        // Badges
+        const estadoBadge = document.getElementById('viewEstadoBadge');
+        estadoBadge.textContent = lead.estado || 'Nuevo';
+        estadoBadge.className = 'badge-status badge-' + (lead.estado || 'nuevo').toLowerCase();
+        
+        const prioridadBadge = document.getElementById('viewPrioridadBadge');
+        prioridadBadge.textContent = lead.prioridad || 'Media';
+        prioridadBadge.className = 'badge-priority badge-' + (lead.prioridad || 'media').toLowerCase();
+        
+        // Contacto
+        const emailEl = document.getElementById('viewEmail');
+        emailEl.textContent = lead.email || '-';
+        emailEl.href = lead.email ? `mailto:${lead.email}` : '#';
+        
+        const telEl = document.getElementById('viewTelefono');
+        telEl.textContent = lead.telefono || '-';
+        telEl.href = lead.telefono ? `tel:${lead.telefono}` : '#';
+        
+        // Empresa
+        document.getElementById('viewEmpresa').textContent = lead.empresa || '-';
+        document.getElementById('viewSector').textContent = lead.sector || '-';
+        
+        // Comercial
+        document.getElementById('viewValor').textContent = '$' + parseInt(lead.valor_estimado || 0).toLocaleString();
+        document.getElementById('viewAsignado').textContent = lead.asignado_a || 'Sin asignar';
+        
+        // Notas
+        document.getElementById('viewNotas').textContent = lead.notas || 'Sin notas adicionales';
+        
+        // Fechas
+        document.getElementById('viewFechaCreacion').textContent = lead.fecha_creacion || '-';
+        document.getElementById('viewFechaActualizacion').textContent = lead.fecha_actualizacion || '-';
+        document.getElementById('viewOrigen').textContent = lead.origen || '-';
+        
+        // Mostrar modal
+        document.getElementById('viewLeadModal').style.display = 'flex';
+        setTimeout(() => lucide.createIcons(), 10);
+        
+    } catch (error) {
+        console.error('Error:', error);
+        showNotification('Error al cargar el lead', 'error');
     }
+}
+
+let currentViewingLeadId = null;
+
+function closeViewLeadModal() {
+    document.getElementById('viewLeadModal').style.display = 'none';
+    currentViewingLeadId = null;
+}
+
+function editLeadFromView() {
+    closeViewLeadModal();
+    if (currentViewingLeadId) {
+        editLead(currentViewingLeadId);
+    }
+}
 
     async function editLead(id) {
         try {
@@ -719,7 +892,7 @@
             const lead = leads.find(l => l.id == id);
             
             if (!lead) {
-                alert('Lead no encontrado');
+                showNotification('Lead no encontrado', 'error');
                 return;
             }
             
@@ -740,12 +913,13 @@
             document.getElementById('leadAssigned').value = lead.asignado_a || '';
             document.getElementById('leadNotes').value = lead.notas || '';
             
-            // Guardar el ID en un atributo del formulario para actualizaciones futuras
+            // Guardar el ID y datos originales para actualización
             document.getElementById('leadForm').dataset.editingId = id;
+            document.getElementById('leadForm').dataset.originalData = JSON.stringify(lead);
             
         } catch (error) {
             console.error('Error:', error);
-            alert('Error al cargar el lead');
+            showNotification('Error al cargar el lead', 'error');
         }
     }
 
@@ -777,6 +951,11 @@
         lucide.createIcons();
         
         try {
+            // Verificar si estamos editando
+            const editingId = document.getElementById('leadForm').dataset.editingId;
+            const editingOriginalData = document.getElementById('leadForm').dataset.originalData;
+            const isEditing = !!editingId;
+            
             // Obtener datos del formulario
             const leadData = {
                 nombre: document.getElementById('leadName').value,
@@ -793,16 +972,30 @@
                 origen: 'CRM Manual'
             };
             
-            console.log('Guardando lead:', leadData);
+            if (isEditing) {
+                // EDITAR
+                const originalData = JSON.parse(editingOriginalData);
+                leadData.fecha_creacion = originalData.fecha_creacion; // Mantener fecha original
+                
+                console.log('Actualizando lead ID:', editingId);
+                await updateLead(editingId, leadData);
+                
+                showNotification('Lead actualizado exitosamente', 'success');
+                
+            } else {
+                // CREAR NUEVO
+                console.log('Creando nuevo lead:', leadData);
+                await addLead(leadData);
+                
+                showNotification('Lead guardado exitosamente', 'success');
+            }
             
-            // Guardar en Google Sheets
-            await addLead(leadData);
+            // Limpiar el dataset
+            delete document.getElementById('leadForm').dataset.editingId;
+            delete document.getElementById('leadForm').dataset.originalData;
             
             // Cerrar modal
             closeLeadModal();
-            
-            // Mostrar mensaje de éxito
-            showNotification('Lead guardado exitosamente', 'success');
             
             // Esperar 2 segundos para que Google Sheets procese
             await new Promise(resolve => setTimeout(resolve, 2000));

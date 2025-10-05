@@ -269,6 +269,53 @@ async function addLead(leadData) {
     
     return await writeSheetData(SHEETS.LEADS, [newRow]);
 }
+// ========== ACTUALIZAR LEAD ==========
+async function updateLead(id, leadData) {
+    try {
+        // URL de tu Google Apps Script
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzE-Oy_tHdbGrpUHVMAHDXyS3fDFvDQZv-HSCQVg8EVu5EVJBIDiDbV26cxxN3tsX9hJA/exec'; // Reemplaza con tu URL
+        
+        // Crear fila actualizada con TODOS los campos
+        const updatedRow = [
+            id,                                                  // id (NO cambiar)
+            leadData.nombre,                                     // nombre
+            leadData.cargo || '',                                // cargo
+            leadData.email,                                      // email
+            leadData.telefono,                                   // telefono
+            leadData.empresa || '',                              // empresa
+            leadData.sector || '',                               // sector
+            leadData.estado || 'Nuevo',                          // estado
+            leadData.prioridad || 'Media',                       // prioridad
+            leadData.valor_estimado || 0,                        // valor_estimado
+            leadData.asignado_a || 'Sin asignar',               // asignado_a
+            leadData.notas || '',                                // notas
+            leadData.fecha_creacion,                             // fecha_creacion (mantener original)
+            new Date().toISOString().split('T')[0],             // fecha_actualizacion (actualizar)
+            leadData.origen || 'CRM Manual'                      // origen
+        ];
+        
+        const response = await fetch(SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                action: 'update',
+                sheetName: SHEETS.LEADS,
+                id: id,
+                values: updatedRow
+            })
+        });
+        
+        console.log('Lead actualizado, ID:', id);
+        return true;
+        
+    } catch (error) {
+        console.error('Error actualizando lead:', error);
+        return false;
+    }
+}
 
 // ========== OPORTUNIDADES ==========
 async function getOportunidades() {
