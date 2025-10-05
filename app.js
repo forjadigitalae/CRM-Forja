@@ -3,8 +3,8 @@
 ===================================================== */
 
 const CONFIG = {
-    SPREADSHEET_ID: '1fMRFNMvwPfKesy1RJhIKwZAIEgyrp8JwRV6YNkaz7og',
-    API_KEY: 'AIzaSyB9vU7X_Zj5L8d7c-AhdC6nduLIefhz_kY', // ⚠️ REEMPLAZAR con tu API Key
+    SPREADSHEET_ID: '1pXa3WMgoqUZd7jeXzJDAoq9H1eLkAevDhAaojT2wBNQ', // ⬅️ ACTUALIZA ESTE ID
+    API_KEY: 'AIzaSyB9vU7X_Zj5L8d7c-AhdC6nduLIefhz_kY',
     SHEET_USERS: 'Usuarios',
     SHEET_LEADS: 'Leads'
 };
@@ -48,7 +48,6 @@ if (loginForm) {
     });
 }
 
-// Función principal de login
 // Función principal de login (VERSION TEMPORAL SIN GOOGLE SHEETS)
 async function login(email, password) {
     const loginBtn = document.getElementById('loginBtn');
@@ -142,3 +141,315 @@ function getCurrentUser() {
         role: localStorage.getItem('userRole')
     };
 }
+
+
+/* =====================================================
+   GOOGLE SHEETS API INTEGRATION
+===================================================== */
+
+// ⬅️ DESDE AQUÍ EMPIEZA EL CÓDIGO NUEVO
+
+const SHEET_ID = '1pXa3WMgoqUZd7jeXzJDAoq9H1eLkAevDhAaojT2wBNQ';
+const API_KEY = 'AIzaSyB9vU7X_Zj5L8d7c-AhdC6nduLIefhz_kY';
+
+const SHEETS = {
+    USUARIOS: 'Usuarios',
+    LEADS: 'Leads',
+    OPORTUNIDADES: 'Oportunidades',
+    INTERACCIONES: 'Interacciones',
+    PROPUESTAS: 'Propuestas',
+    RECORDATORIOS: 'Recordatorios',
+    EVENTOS: 'Eventos',
+    CONFIGURACION: 'Configuracion'
+};
+
+// ==========================================
+// FUNCIONES GENÉRICAS PARA LEER DATOS
+// ==========================================
+
+/**
+ * Leer datos de cualquier pestaña
+ * @param {string} sheetName - Nombre de la pestaña
+ * @param {string} range - Rango de celdas (ej: 'A1:Z1000')
+ * @returns {Promise<Array>} Array de objetos con los datos
+ */
+async function readSheetData(sheetName, range = 'A1:Z1000') {
+    try {
+        const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${sheetName}!${range}?key=${API_KEY}`;
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        if (!data.values || data.values.length === 0) {
+            return [];
+        }
+        
+        // Primera fila son los encabezados
+        const headers = data.values[0];
+        const rows = data.values.slice(1);
+        
+        // Convertir a array de objetos
+        return rows.map(row => {
+            const obj = {};
+            headers.forEach((header, index) => {
+                obj[header] = row[index] || '';
+            });
+            return obj;
+        });
+    } catch (error) {
+        console.error(`Error leyendo ${sheetName}:`, error);
+        return [];
+    }
+}
+
+/**
+ * Escribir datos en cualquier pestaña
+ * @param {string} sheetName - Nombre de la pestaña
+ * @param {Array} values - Array de arrays con los datos
+ * @returns {Promise<boolean>} True si se guardó correctamente
+ */
+async function writeSheetData(sheetName, values) {
+    try {
+        const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${sheetName}!A1:append?valueInputOption=RAW&key=${API_KEY}`;
+        
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                values: values
+            })
+        });
+        
+        return response.ok;
+    } catch (error) {
+        console.error(`Error escribiendo en ${sheetName}:`, error);
+        return false;
+    }
+}
+
+// ==========================================
+// FUNCIONES ESPECÍFICAS POR MÓDULO
+// ==========================================
+
+// ========== LEADS ==========
+async function getLeads() {
+    return await readSheetData(SHEETS.LEADS);
+}
+
+async function addLead(leadData) {
+    const newRow = [
+        '', // ID se auto-genera
+        leadData.nombre,
+        leadData.cargo || '',
+        leadData.email,
+        leadData.telefono,
+        leadData.empresa || '',
+        leadData.sector || '',
+        leadData.estado || 'Nuevo',
+        leadData.prioridad || 'Media',
+        leadData.valor_estimado || 0,
+        leadData.asignado_a || 'Sin asignar',
+        leadData.notas || '',
+        new Date().toISOString().split('T')[0], // fecha_creacion
+        new Date().toISOString().split('T')[0], // fecha_actualizacion
+        leadData.origen || 'Web'
+    ];
+    
+    return await writeSheetData(SHEETS.LEADS, [newRow]);
+}
+
+// ========== OPORTUNIDADES ==========
+async function getOportunidades() {
+    return await readSheetData(SHEETS.OPORTUNIDADES);
+}
+
+async function addOportunidad(oppData) {
+    const newRow = [
+        '', // ID
+        oppData.titulo,
+        oppData.lead_id || '',
+        oppData.empresa || '',
+        oppData.contacto || '',
+        oppData.etapa || 'Prospecto',
+        oppData.valor || 0,
+        oppData.probabilidad || 0,
+        new Date().toISOString().split('T')[0], // fecha_creacion
+        oppData.fecha_cierre_estimada || '',
+        '', // fecha_cierre_real
+        oppData.asignado_a || '',
+        oppData.descripcion || '',
+        oppData.notas || '',
+        'Activa'
+    ];
+    
+    return await writeSheetData(SHEETS.OPORTUNIDADES, [newRow]);
+}
+
+// ========== INTERACCIONES ==========
+async function getInteracciones() {
+    return await readSheetData(SHEETS.INTERACCIONES);
+}
+
+async function addInteraccion(interactionData) {
+    const newRow = [
+        '', // ID
+        interactionData.lead_id || '',
+        interactionData.oportunidad_id || '',
+        interactionData.tipo || 'nota',
+        interactionData.titulo || '',
+        interactionData.descripcion || '',
+        interactionData.fecha || new Date().toISOString().split('T')[0],
+        interactionData.hora || '',
+        interactionData.duracion || 0,
+        interactionData.usuario || '',
+        interactionData.empresa || '',
+        interactionData.cliente || '',
+        interactionData.resultado || '',
+        interactionData.siguiente_accion || '',
+        new Date().toISOString() // fecha_creacion
+    ];
+    
+    return await writeSheetData(SHEETS.INTERACCIONES, [newRow]);
+}
+
+// ========== PROPUESTAS ==========
+async function getPropuestas() {
+    return await readSheetData(SHEETS.PROPUESTAS);
+}
+
+async function addPropuesta(proposalData) {
+    const newRow = [
+        '', // ID
+        proposalData.titulo,
+        proposalData.lead_id || '',
+        proposalData.oportunidad_id || '',
+        proposalData.empresa || '',
+        proposalData.contacto || '',
+        proposalData.descripcion || '',
+        proposalData.valor || 0,
+        proposalData.moneda || 'USD',
+        proposalData.estado || 'Borrador',
+        new Date().toISOString().split('T')[0], // fecha_creacion
+        proposalData.fecha_envio || '',
+        proposalData.fecha_valida_hasta || '',
+        proposalData.fecha_aprobacion || '',
+        proposalData.creado_por || '',
+        proposalData.url_documento || '',
+        proposalData.notas || '',
+        proposalData.terminos || ''
+    ];
+    
+    return await writeSheetData(SHEETS.PROPUESTAS, [newRow]);
+}
+
+// ========== RECORDATORIOS ==========
+async function getRecordatorios() {
+    return await readSheetData(SHEETS.RECORDATORIOS);
+}
+
+async function addRecordatorio(reminderData) {
+    const newRow = [
+        '', // ID
+        reminderData.titulo,
+        reminderData.descripcion || '',
+        reminderData.tipo || 'tarea',
+        reminderData.fecha || new Date().toISOString().split('T')[0],
+        reminderData.hora || '',
+        reminderData.prioridad || 'Media',
+        'Pendiente', // estado
+        reminderData.lead_id || '',
+        reminderData.oportunidad_id || '',
+        reminderData.empresa || '',
+        reminderData.asignado_a || '',
+        '', // completado_por
+        '', // fecha_completado
+        new Date().toISOString(), // fecha_creacion
+        reminderData.notificacion || 'No',
+        reminderData.minutos_antes || 30
+    ];
+    
+    return await writeSheetData(SHEETS.RECORDATORIOS, [newRow]);
+}
+
+// ========== EVENTOS ==========
+async function getEventos() {
+    return await readSheetData(SHEETS.EVENTOS);
+}
+
+async function addEvento(eventData) {
+    const newRow = [
+        '', // ID
+        eventData.titulo,
+        eventData.descripcion || '',
+        eventData.tipo || 'reunion',
+        eventData.fecha || new Date().toISOString().split('T')[0],
+        eventData.hora_inicio || '',
+        eventData.hora_fin || '',
+        eventData.duracion || 60,
+        eventData.ubicacion || '',
+        eventData.lead_id || '',
+        eventData.oportunidad_id || '',
+        eventData.empresa || '',
+        eventData.cliente || '',
+        eventData.asignado_a || '',
+        'Programado', // estado
+        eventData.recordatorio || 'No',
+        eventData.minutos_recordatorio || 30,
+        '', // google_calendar_id
+        new Date().toISOString() // fecha_creacion
+    ];
+    
+    return await writeSheetData(SHEETS.EVENTOS, [newRow]);
+}
+
+// ========== CONFIGURACIÓN ==========
+async function getConfiguracion() {
+    return await readSheetData(SHEETS.CONFIGURACION);
+}
+
+async function getConfigValue(key) {
+    const configs = await getConfiguracion();
+    const config = configs.find(c => c.clave === key);
+    return config ? config.valor : null;
+}
+
+// ==========================================
+// FUNCIONES DE UTILIDAD
+// ==========================================
+
+/**
+ * Generar próximo ID para una pestaña
+ */
+async function getNextId(sheetName) {
+    const data = await readSheetData(sheetName);
+    if (data.length === 0) return 1;
+    
+    const ids = data.map(row => parseInt(row.id) || 0);
+    return Math.max(...ids) + 1;
+}
+
+/**
+ * Cargar datos de múltiples pestañas
+ */
+async function loadAllData() {
+    const [leads, oportunidades, interacciones, propuestas, recordatorios, eventos] = await Promise.all([
+        getLeads(),
+        getOportunidades(),
+        getInteracciones(),
+        getPropuestas(),
+        getRecordatorios(),
+        getEventos()
+    ]);
+    
+    return {
+        leads,
+        oportunidades,
+        interacciones,
+        propuestas,
+        recordatorios,
+        eventos
+    };
+}
+
+console.log('✅ Google Sheets API Integration loaded');
