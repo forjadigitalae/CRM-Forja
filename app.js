@@ -302,7 +302,7 @@ async function updateLead(id, leadData) {
             },
             body: JSON.stringify({
                 action: 'update',
-                sheetName: SHEETS.LEADS,
+                sheetName: 'Leads',
                 id: id,
                 values: updatedRow
             })
