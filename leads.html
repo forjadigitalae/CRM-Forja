@@ -905,19 +905,19 @@
     }
 }
 
-let currentViewingLeadId = null;
+    let currentViewingLeadId = null;
 
-function closeViewLeadModal() {
-    document.getElementById('viewLeadModal').style.display = 'none';
-    currentViewingLeadId = null;
-}
-
-function editLeadFromView() {
-    closeViewLeadModal();
-    if (currentViewingLeadId) {
-        editLead(currentViewingLeadId);
+    function closeViewLeadModal() {
+        document.getElementById('viewLeadModal').style.display = 'none';
+        currentViewingLeadId = null;
     }
-}
+
+    function editLeadFromView() {
+        closeViewLeadModal();
+        if (currentViewingLeadId) {
+            editLead(currentViewingLeadId);
+        }
+    }
 
     async function editLead(id) {
         try {
