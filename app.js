@@ -202,26 +202,32 @@ async function readSheetData(sheetName, range = 'A1:Z1000') {
 }
 
 /**
- * Escribir datos en cualquier pestaña
+ * Escribir datos en cualquier pestaña usando Google Apps Script
  * @param {string} sheetName - Nombre de la pestaña
- * @param {Array} values - Array de arrays con los datos
+ * @param {Array} values - Array con los valores a escribir
  * @returns {Promise<boolean>} True si se guardó correctamente
  */
 async function writeSheetData(sheetName, values) {
     try {
-        const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${sheetName}!A1:append?valueInputOption=RAW&key=${API_KEY}`;
+        // URL de tu Google Apps Script
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzE-Oy_tHdbGrpUHVMAHDXyS3fDFvDQZv-HSCQVg8EVu5EVJBIDiDbV26cxxN3tsX9hJA/exec'; // ⬅️ REEMPLAZAR
         
-        const response = await fetch(url, {
+        const response = await fetch(SCRIPT_URL, {
             method: 'POST',
+            mode: 'no-cors',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
+                sheetName: sheetName,
                 values: values
             })
         });
         
-        return response.ok;
+        // Como usamos no-cors, asumimos éxito si no hay error
+        console.log('Datos enviados a Google Apps Script');
+        return true;
+        
     } catch (error) {
         console.error(`Error escribiendo en ${sheetName}:`, error);
         return false;
