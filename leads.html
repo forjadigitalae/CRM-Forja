@@ -498,99 +498,255 @@
     <!-- Scripts -->
     <script src="app.js"></script>
     <script>
-        // Inicializar iconos
-        lucide.createIcons();
-        
-        // Verificar autenticación
-        if (!checkAuth()) {
-            window.location.href = 'index.html';
-        }
-        
-        // Cargar usuario
-        const user = getCurrentUser();
-        document.getElementById('userName').textContent = user.name || 'Usuario';
-        document.getElementById('userRole').textContent = user.role || 'Usuario';
-        const initials = user.name 
-            ? user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()
-            : 'U';
-        document.getElementById('userInitials').textContent = initials;
-        
-        // Funciones del modal
-        function openAddLeadModal() {
-            document.getElementById('leadModal').style.display = 'flex';
-            document.getElementById('modalTitle').textContent = 'Nuevo Lead';
-            document.getElementById('leadForm').reset();
-            setTimeout(() => {
-                lucide.createIcons();
-            }, 10);
-        }
-        
-        function closeLeadModal() {
-            document.getElementById('leadModal').style.display = 'none';
-        }
-        
-        function editLead(id) {
-            openAddLeadModal();
-            document.getElementById('modalTitle').textContent = 'Editar Lead';
-            // Aquí cargarías los datos del lead específico
-        }
-        
-        function viewLead(id) {
-            alert('Ver detalle del lead #' + id);
-        }
-        
-        function deleteLead(id) {
-            if (confirm('¿Estás seguro de eliminar este lead?')) {
-                alert('Lead eliminado');
-            }
-        }
-        
-        function saveLead(event) {
-            event.preventDefault();
-            alert('Lead guardado exitosamente');
-            closeLeadModal();
-        }
-        
-        // Búsqueda en tiempo real
-        document.getElementById('searchInput').addEventListener('input', function(e) {
-            const searchTerm = e.target.value.toLowerCase();
-            const rows = document.querySelectorAll('#leadsTableBody tr');
-            
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(searchTerm) ? '' : 'none';
-            });
-        });
-        
-        // Filtros
-        document.getElementById('filterEstado').addEventListener('change', filterLeads);
-        document.getElementById('filterPrioridad').addEventListener('change', filterLeads);
-        
-        function filterLeads() {
-            const estadoFilter = document.getElementById('filterEstado').value;
-            const prioridadFilter = document.getElementById('filterPrioridad').value;
-            const rows = document.querySelectorAll('#leadsTableBody tr');
-            
-            rows.forEach(row => {
-                const estado = row.querySelector('.badge-status').textContent;
-                const prioridad = row.querySelector('.badge-priority').textContent;
-                
-                const matchEstado = !estadoFilter || estado === estadoFilter;
-                const matchPrioridad = !prioridadFilter || prioridad === prioridadFilter;
-                
-                row.style.display = (matchEstado && matchPrioridad) ? '' : 'none';
-            });
-        }
-        
-        // Botón sync
-        document.getElementById('syncBtn').addEventListener('click', function() {
-            const icon = this.querySelector('i');
-            icon.style.animation = 'spin 1s linear';
-            setTimeout(() => {
-                icon.style.animation = '';
-            }, 1000);
-        });
-    </script>
+    // Inicializar iconos
+    lucide.createIcons();
     
+    // Verificar autenticación
+    if (!checkAuth()) {
+        window.location.href = 'index.html';
+    }
+    
+    // Cargar usuario
+    const user = getCurrentUser();
+    document.getElementById('userName').textContent = user.name || 'Usuario';
+    document.getElementById('userRole').textContent = user.role || 'Usuario';
+    const initials = user.name 
+        ? user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()
+        : 'U';
+    document.getElementById('userInitials').textContent = initials;
+    
+    // ==========================================
+    // CARGAR LEADS DESDE GOOGLE SHEETS
+    // ==========================================
+    
+    async function loadLeadsFromSheet() {
+        try {
+            console.log('Cargando leads desde Google Sheets...');
+            
+            // Obtener leads del Sheet
+            const leads = await getLeads();
+            console.log('Leads obtenidos:', leads);
+            
+            // Actualizar contadores
+            document.getElementById('totalLeadsCount').textContent = leads.length;
+            
+            const newLeads = leads.filter(l => l.estado === 'Nuevo').length;
+            const qualifiedLeads = leads.filter(l => l.estado === 'Calificado').length;
+            const convertedLeads = leads.filter(l => l.estado === 'Convertido').length;
+            
+            document.getElementById('newLeadsCount').textContent = newLeads;
+            document.getElementById('qualifiedLeadsCount').textContent = qualifiedLeads;
+            document.getElementById('convertedLeadsCount').textContent = convertedLeads;
+            
+            // Renderizar tabla
+            renderLeadsTable(leads);
+            
+        } catch (error) {
+            console.error('Error cargando leads:', error);
+            alert('Error al cargar los leads. Por favor recarga la página.');
+        }
+    }
+    
+    // ==========================================
+    // RENDERIZAR TABLA DE LEADS
+    // ==========================================
+    
+    function renderLeadsTable(leads) {
+        const tbody = document.getElementById('leadsTableBody');
+        
+        if (leads.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="8" style="text-align: center; padding: 40px; color: var(--gris-medio);">
+                        No hay leads registrados. Haz click en "+ Nuevo Lead" para agregar uno.
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+        
+        tbody.innerHTML = leads.map((lead, index) => {
+            // Generar iniciales para el avatar
+            const nameInitials = lead.nombre 
+                ? lead.nombre.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()
+                : '?';
+            
+            // Colores aleatorios para avatares (basado en índice)
+            const avatarColors = ['#8560C0', '#EE8028', '#4CCED5', '#27325A', '#AA2F0C', '#73CFCE'];
+            const avatarColor = avatarColors[index % avatarColors.length];
+            
+            // Badge de estado
+            let estadoBadge = '';
+            switch(lead.estado) {
+                case 'Nuevo':
+                    estadoBadge = 'badge-nuevo';
+                    break;
+                case 'Contactado':
+                    estadoBadge = 'badge-contactado';
+                    break;
+                case 'Calificado':
+                    estadoBadge = 'badge-calificado';
+                    break;
+                case 'Convertido':
+                    estadoBadge = 'badge-convertido';
+                    break;
+                default:
+                    estadoBadge = 'badge-nuevo';
+            }
+            
+            // Badge de prioridad
+            let prioridadBadge = '';
+            switch(lead.prioridad) {
+                case 'Alta':
+                    prioridadBadge = 'badge-alta';
+                    break;
+                case 'Media':
+                    prioridadBadge = 'badge-media';
+                    break;
+                case 'Baja':
+                    prioridadBadge = 'badge-baja';
+                    break;
+                default:
+                    prioridadBadge = 'badge-media';
+            }
+            
+            return `
+                <tr>
+                    <td>
+                        <div class="table-user">
+                            <div class="table-avatar" style="background: ${avatarColor};">${nameInitials}</div>
+                            <span class="table-name">${lead.nombre || 'Sin nombre'}</span>
+                        </div>
+                    </td>
+                    <td>${lead.empresa || '-'}</td>
+                    <td>
+                        <div class="contact-icons">
+                            ${lead.email ? `
+                                <a href="mailto:${lead.email}" class="contact-btn">
+                                    <i data-lucide="mail"></i>
+                                </a>
+                            ` : ''}
+                            ${lead.telefono ? `
+                                <a href="tel:${lead.telefono}" class="contact-btn">
+                                    <i data-lucide="phone"></i>
+                                </a>
+                            ` : ''}
+                        </div>
+                    </td>
+                    <td><span class="badge-status ${estadoBadge}">${lead.estado || 'Nuevo'}</span></td>
+                    <td><span class="badge-priority ${prioridadBadge}">${lead.prioridad || 'Media'}</span></td>
+                    <td class="table-value">$${parseInt(lead.valor_estimado || 0).toLocaleString()}</td>
+                    <td>${lead.asignado_a || 'Sin asignar'}</td>
+                    <td>
+                        <div class="table-actions">
+                            <button class="btn-icon" onclick="viewLead(${lead.id})">
+                                <i data-lucide="eye"></i>
+                            </button>
+                            <button class="btn-icon" onclick="editLead(${lead.id})">
+                                <i data-lucide="edit"></i>
+                            </button>
+                            <button class="btn-icon btn-danger" onclick="deleteLead(${lead.id})">
+                                <i data-lucide="trash-2"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+        
+        // Re-inicializar iconos de Lucide
+        lucide.createIcons();
+    }
+    
+    // ==========================================
+    // CARGAR DATOS AL INICIAR LA PÁGINA
+    // ==========================================
+    
+    // Cargar leads cuando la página esté lista
+    loadLeadsFromSheet();
+    
+    // Las demás funciones que ya tenías...
+    
+    function openAddLeadModal() {
+        document.getElementById('leadModal').style.display = 'flex';
+        document.getElementById('modalTitle').textContent = 'Nuevo Lead';
+        document.getElementById('leadForm').reset();
+        setTimeout(() => {
+            lucide.createIcons();
+        }, 10);
+    }
+    
+    function closeLeadModal() {
+        document.getElementById('leadModal').style.display = 'none';
+    }
+    
+    function editLead(id) {
+        openAddLeadModal();
+        document.getElementById('modalTitle').textContent = 'Editar Lead';
+        // Aquí cargarías los datos del lead específico
+    }
+    
+    function viewLead(id) {
+        alert('Ver detalle del lead #' + id);
+    }
+    
+    function deleteLead(id) {
+        if (confirm('¿Estás seguro de eliminar este lead?')) {
+            alert('Lead eliminado');
+        }
+    }
+    
+    function saveLead(event) {
+        event.preventDefault();
+        alert('Lead guardado exitosamente');
+        closeLeadModal();
+    }
+    
+    // Búsqueda en tiempo real
+    document.getElementById('searchInput').addEventListener('input', function(e) {
+        const searchTerm = e.target.value.toLowerCase();
+        const rows = document.querySelectorAll('#leadsTableBody tr');
+        
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(searchTerm) ? '' : 'none';
+        });
+    });
+    
+    // Filtros
+    document.getElementById('filterEstado').addEventListener('change', filterLeads);
+    document.getElementById('filterPrioridad').addEventListener('change', filterLeads);
+    
+    function filterLeads() {
+        const estadoFilter = document.getElementById('filterEstado').value;
+        const prioridadFilter = document.getElementById('filterPrioridad').value;
+        const rows = document.querySelectorAll('#leadsTableBody tr');
+        
+        rows.forEach(row => {
+            const estadoBadge = row.querySelector('.badge-status');
+            const prioridadBadge = row.querySelector('.badge-priority');
+            
+            if (!estadoBadge || !prioridadBadge) return;
+            
+            const estado = estadoBadge.textContent;
+            const prioridad = prioridadBadge.textContent;
+            
+            const matchEstado = !estadoFilter || estado === estadoFilter;
+            const matchPrioridad = !prioridadFilter || prioridad === prioridadFilter;
+            
+            row.style.display = (matchEstado && matchPrioridad) ? '' : 'none';
+        });
+    }
+    
+    // Botón sync
+    document.getElementById('syncBtn').addEventListener('click', function() {
+        const icon = this.querySelector('i');
+        icon.style.animation = 'spin 1s linear';
+        loadLeadsFromSheet(); // Recargar datos
+        setTimeout(() => {
+            icon.style.animation = '';
+        }, 1000);
+    });
+    </script>    
 </body>
 </html>
